@@ -1,0 +1,17 @@
+<configuration>
+    <!--<appender name="FILE_LOGGER" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<append>true</append>-->
+        <!--<immediateFlush>true</immediateFlush>-->
+        <!--<encoder>-->
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M\(%line\) - %msg%n</pattern>-->
+        <!--</encodoer>-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--<fileNamePattern>${catalina.base}/logs/queueBrain_%d{yyyy-MM-dd}.log</fileNamePattern>-->
+            <!--<maxHistory>30</maxHistory>-->
+        <!--</rollingPolicy>-->
+    <!--</appender>-->
+
+    <!--<logger name="com.zoxal.queuebrain" level="debug" additivity="true">-->
+        <!--<appender-ref ref="FILE_LOGGER" />-->
+    <!--</logger>-->
+</configuration>
