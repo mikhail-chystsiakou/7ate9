@@ -1,12 +1,12 @@
 package com.yatty.sevennine.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MoveRequest {
     private int moveNumber;
     private int move;
+    private String gameId;
 
     public int getMoveNumber() {
         return moveNumber;
@@ -22,5 +22,13 @@ public class MoveRequest {
 
     public void setMove(int move) {
         this.move = move;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 }

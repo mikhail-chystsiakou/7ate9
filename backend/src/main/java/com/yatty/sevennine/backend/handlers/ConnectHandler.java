@@ -2,6 +2,7 @@ package com.yatty.sevennine.backend.handlers;
 
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.ConnectResponse;
+import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.util.Constants;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -23,7 +24,10 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 e.cause().printStackTrace();
             }
         }).sync();
-        ctx.channel().writeAndFlush(new ConnectResponse(true)).addListener((e) -> {
+        ConnectResponse response = new ConnectResponse();
+        response.setGameId(Game.addGame());
+        response.setSucceed(true);
+        ctx.channel().writeAndFlush(response).addListener((e) -> {
             if (e.isSuccess()) {
                 System.out.println("Response sent");
             } else {

@@ -1,11 +1,11 @@
 package com.yatty.sevennine.backend;
 
 import com.yatty.sevennine.backend.handlers.ConnectHandler;
+import com.yatty.sevennine.backend.handlers.DisconnectHandler;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -15,13 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class UDPServerStub {
     private static final Logger logger = LoggerFactory.getLogger(UDPServerStub.class);
-    private static Map<InetSocketAddress, Channel> clients = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         Properties environmentProperties = PropertiesProvider.getEnvironmentProperties();
@@ -50,6 +47,7 @@ public class UDPServerStub {
         protected void initChannel(NioDatagramChannel ch) throws Exception {
             ch.pipeline().addFirst("decodeHandler", new JsonMessageDecoder());
             ch.pipeline().addLast("connectHandler", new ConnectHandler());
+            ch.pipeline().addLast("disconnectHandler", new DisconnectHandler());
             ch.pipeline().addLast("encodeHandler", new JsonMessageEncoder());
         }
     }

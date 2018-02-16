@@ -10,6 +10,7 @@ public class ConnectResponse {
 
     private boolean succeed;
     private String description;
+    private String gameId;
 
     public ConnectResponse() {
     }
@@ -32,6 +33,14 @@ public class ConnectResponse {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)

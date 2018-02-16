@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.ConnectResponse;
 import com.yatty.sevennine.backend.TestMessage;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
-import io.netty.util.AttributeKey;
 
-import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
