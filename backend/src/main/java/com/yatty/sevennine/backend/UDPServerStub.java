@@ -1,28 +1,23 @@
 package com.yatty.sevennine.backend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yatty.sevennine.backend.testing.ClientStub;
+import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
+import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.DatagramPacketDecoder;
-import io.netty.handler.codec.MessageToMessageDecoder;
-import io.netty.handler.codec.bytes.ByteArrayDecoder;
-import io.netty.handler.codec.bytes.ByteArrayEncoder;
+import io.netty.handler.codec.DatagramPacketEncoder;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -42,10 +37,11 @@ public class UDPServerStub {
             b.group(group)
                     .channel(NioDatagramChannel.class)
                     .handler(new ServerChannelInitializer());
-            String connectionPort = environmentProperties.getProperty(PropertiesProvider.Environment.PORT);
-            System.out.println("Server started");
-            b.bind(Integer.valueOf(connectionPort)).sync().channel().closeFuture().await();
-            System.out.printf("Server started2");
+            InetSocketAddress connectionPort = new InetSocketAddress(
+                    Integer.valueOf(environmentProperties.getProperty(PropertiesProvider.Environment.PORT))
+            );
+            System.out.println("Server started...");
+            b.connect(connectionPort).sync().channel().closeFuture().await();
         } finally {
             group.shutdownGracefully();
         }
@@ -63,31 +59,25 @@ public class UDPServerStub {
         protected void initChannel(NioDatagramChannel ch) throws Exception {
 //            ch.pipeline().addLast(new ClientStub.BasicJacksonCodec<>(TestMessage.class, new ObjectMapper()));
 //            ch.pipeline().addLast(new TestMessageDecoder());
-            ch.pipeline().addLast(new DatagramPacketDecoder(new TestMessageDecoder()));
+            ch.pipeline().addLast(new DatagramPacketDecoder(new JsonMessageDecoder()));
+            ch.pipeline().addLast(new JsonMessageEncoder());
 //            ch.pipeline().addLast(new InboundHandler());
             ch.pipeline().addLast(new ObjectInboundHandler());
 //            ch.pipeline().addLast(new ByteArrayEncoder());
         }
     }
 
-    public static class TestMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
+    public static class ObjectInboundHandler extends SimpleChannelInboundHandler<Object> {
         @Override
-        protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-            System.out.println("Decoding...");
-            ByteBufInputStream byteBufInputStream = new ByteBufInputStream(msg);
-            out.add(new ObjectMapper().readValue((InputStream) byteBufInputStream, TestMessage.class));
-            // copy the ByteBuf content to a byte array
-//            byte[] array = new byte[msg.readableBytes()];
-//            msg.getBytes(0, array);
-//
-//            out.add(array);
-        }
-    }
-
-    public static class ObjectInboundHandler extends SimpleChannelInboundHandler<TestMessage> {
-        @Override
-        protected void channelRead0(ChannelHandlerContext ctx, TestMessage msg) throws Exception {
+        protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
             System.out.println("Got message with data: " + msg.toString());
+            ctx.writeAndFlush(msg).addListener((e) -> {
+                if(e.isSuccess()) {
+                    System.out.println("OK!");
+                } else {
+                    e.cause().printStackTrace();
+                }
+            });
         }
     }
 

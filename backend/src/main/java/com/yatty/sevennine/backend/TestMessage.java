@@ -1,10 +1,14 @@
 package com.yatty.sevennine.backend;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestMessage {
     private String data;
+
+    public static final String TYPE = "TestMessage";
 
     public TestMessage() {
     }
@@ -19,6 +23,11 @@ public class TestMessage {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)
+    public String getTYPE() {
+        return TYPE;
     }
 
     @Override

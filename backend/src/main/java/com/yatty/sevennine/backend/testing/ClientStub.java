@@ -3,6 +3,8 @@ package com.yatty.sevennine.backend.testing;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.backend.TestMessage;
+import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
+import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -12,6 +14,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.codec.ByteToMessageCodec;
+import io.netty.handler.codec.DatagramPacketDecoder;
+import io.netty.handler.codec.DatagramPacketEncoder;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 
 import java.io.InputStream;
@@ -49,46 +53,17 @@ public class ClientStub {
     private static class PipeLineInitializer extends ChannelInitializer<NioDatagramChannel> {
         @Override
         protected void initChannel(NioDatagramChannel ch) throws Exception {
-            ch.pipeline().addFirst(new BasicJacksonCodec<TestMessage>(TestMessage.class, new ObjectMapper()));
+            ch.pipeline().addLast(new DatagramPacketDecoder(new JsonMessageDecoder()));
+            ch.pipeline().addLast(new JsonMessageEncoder());
+//            ch.pipeline().addFirst(new BasicJacksonCodec<>(TestMessage.class, new ObjectMapper()));
             ch.pipeline().addLast(new LogicHandler());
         }
     }
 
-    private static class LogicHandler extends SimpleChannelInboundHandler<ByteBuf> {
+    private static class LogicHandler extends SimpleChannelInboundHandler<Object> {
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-            System.out.println("Got data: " + msg.toString(StandardCharsets.UTF_8));
+        protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("Got data: " + msg.toString());
         }
     }
-
-    public static class BasicJacksonCodec<T> extends ByteToMessageCodec<T> {
-        private final Class<T> clazz;
-        private final ObjectMapper objectMapper;
-
-        public BasicJacksonCodec(Class<T> clazz, ObjectMapper objectMapper) {
-            super(clazz);
-            this.clazz = clazz;
-            this.objectMapper = objectMapper;
-        }
-
-        @Override
-        protected void encode(ChannelHandlerContext ctx, T msg, ByteBuf out) throws Exception {
-            System.out.println("Encoding...");
-            ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(out);
-            objectMapper.writeValue((OutputStream) byteBufOutputStream, msg);
-        }
-
-        @Override
-        protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-            System.out.println("Decoding...");
-            ByteBufInputStream byteBufInputStream = new ByteBufInputStream(in);
-            out.add(objectMapper.readValue((InputStream) byteBufInputStream, clazz));
-        }
-
-        @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            cause.printStackTrace();
-        }
-    }
-
 }
