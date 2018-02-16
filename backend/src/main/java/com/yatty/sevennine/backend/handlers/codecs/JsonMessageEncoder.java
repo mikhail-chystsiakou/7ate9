@@ -19,6 +19,8 @@ public class JsonMessageEncoder extends MessageToMessageEncoder<Object> {
         ByteBuf byteBuf = Unpooled.buffer();
         ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(byteBuf);
         objectMapper.writeValue((OutputStream) byteBufOutputStream, msg);
+//        new DatagramPacket(byteBuf, msg.sender());
+//        out.set(0, new DatagramPacket(byteBuf, ctx.channel().msg.recipient()));
         out.add(byteBuf);
     }
 }

@@ -1,10 +1,21 @@
 package com.yatty.sevennine.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConnectRequest {
+    public static final String TYPE = "ConnectRequest";
+
     private String name;
+
+    public ConnectRequest() {
+    }
+
+    public ConnectRequest(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;
@@ -12,5 +23,10 @@ public class ConnectRequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)
+    public String getTYPE() {
+        return TYPE;
     }
 }
