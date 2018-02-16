@@ -33,12 +33,24 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             if (player != null) {
                 newStateEvent.setPlayer(player.getName());
                 newStateEvent.setNextCard(game.generateNextMove());
+                for(Player p : game.getPlayers()) {
+                    ctx.channel().disconnect().sync();
+                    ctx.channel().connect(p.getRemoteAddress());
+                    ctx.channel().writeAndFlush(newStateEvent).addListener((e) -> {
+                        if (e.isSuccess()) {
+                            logger.debug("New state message sent to '{}' ({})", p.getName(), p.getRemoteAddress());
+                        } else {
+                            logger.warn("Can not send message to remote peer: {}", e);
+                        }
+                    }).sync();
+                }
             } else {
-                logger.warn("Player name is null");
+                logger.warn("Can not make move because player is not registered in the game");
             }
         } else {
             MoveRejectedResponse response = new MoveRejectedResponse();
             response.setMove(msg.getMove());
+            logger.debug("Move {} rejected", msg.getMove());
             ctx.channel().writeAndFlush(response);
         }
     }

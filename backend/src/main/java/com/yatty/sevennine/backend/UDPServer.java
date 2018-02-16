@@ -8,12 +8,8 @@ import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.slf4j.Logger;
@@ -23,12 +19,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Properties;
 
-public class UDPServerStub {
-    private static final Logger logger = LoggerFactory.getLogger(UDPServerStub.class);
+public class UDPServer {
+    private static final Logger logger = LoggerFactory.getLogger(UDPServer.class);
 
     public static void main(String[] args) throws Exception {
         Properties environmentProperties = PropertiesProvider.getEnvironmentProperties();
-        new UDPServerStub().start(environmentProperties);
+        new UDPServer().start(environmentProperties);
     }
 
     public void start(Properties environmentProperties) throws IOException, InterruptedException {

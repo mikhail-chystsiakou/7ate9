@@ -12,27 +12,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.Channel;
 
 public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> {
     private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ConnectRequest msg) throws Exception {
-        System.out.println("Connecting..");
+        logger.trace("Connecting..");
         InetSocketAddress peerAddress = ctx.channel().attr(Constants.PEER_ADDRESS_KEY).get();
-        System.out.println("Got message from: " + peerAddress);
         ctx.channel().connect(peerAddress).addListener((e) -> {
             if (e.isSuccess()) {
-                System.out.println("Connected to peer");
+                logger.debug("Connected to {}", peerAddress);
             } else {
-                System.out.println("Failed to connect");
-                e.cause().printStackTrace();
+                logger.warn("Failed to connect: ", e.cause());
             }
         }).sync();
         Game game = Game.getGame();
         if (game == null) {
             game = Game.addGame();
+        }
+
+        if (game.getPlayersNum() >= Game.PLAYERS_NUM) {
+            ConnectResponse response = new ConnectResponse();
+            response.setSucceed(false);
+            ctx.channel().writeAndFlush(response).addListener((e) -> {
+                if (e.isSuccess()) {
+                    logger.debug("Connect response {} sent", response);
+                } else {
+                    e.cause().printStackTrace();
+                }
+            }).sync();
+            return;
         }
 
         Player player = new Player(msg.getName());
@@ -45,7 +55,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         response.setSucceed(true);
         ctx.channel().writeAndFlush(response).addListener((e) -> {
             if (e.isSuccess()) {
-                System.out.println("Response sent");
+                logger.debug("Connect response {} sent", response);
             } else {
                 e.cause().printStackTrace();
             }
@@ -53,7 +63,6 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
 
         // game started
         if (game.getPlayersNum() == Game.PLAYERS_NUM) {
-            System.out.println("Sending game started event");
             game.getPlayers().forEach((p) -> {
                 GameStartedEvent gameStartedEvent = new GameStartedEvent(p.getGame().generateNextMove());
                 // TODO fix for real multi-threading
@@ -62,7 +71,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                     ctx.channel().connect(p.getRemoteAddress());
                     ctx.channel().writeAndFlush(gameStartedEvent).addListener((e) -> {
                         if (e.isSuccess()) {
-                            System.out.println("Game start message sent to "+ player.getName());
+                            logger.debug("Game start message sent to '{}' ({})", player.getName(), player.getRemoteAddress());
                         } else {
                             logger.warn("Can not send message to remote peer: {}", e);
                             e.cause().printStackTrace();
@@ -71,7 +80,6 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 } catch (InterruptedException e) {
                     logger.warn("Unexpected exception: {}", e);
                 }
-
             });
         }
     }

@@ -57,4 +57,8 @@ public class Game {
             return gameMap.values().iterator().next();
         }
     }
+
+    public static void resetGame() {
+        gameMap.clear();
+    }
 }

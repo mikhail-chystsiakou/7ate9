@@ -1,11 +1,15 @@
 package com.yatty.sevennine.backend.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Properties;
 
 public class PropertiesProvider {
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesProvider.class);
     private static HashMap<String, Properties> propertiesCache = new HashMap<>();
 
     public interface Environment {
