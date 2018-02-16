@@ -10,6 +10,8 @@ public class Game {
 
     private List<Player> players = new ArrayList<>();
 
+    private int card;
+
 
     public void addPlayer(Player player) {
         players.add(player);
@@ -28,14 +30,19 @@ public class Game {
     }
 
     // TODO: kill me
-    public static int generateNextMove() {
-        return new Random().nextInt(3) + 1;
+    public int generateNextMove() {
+        card = new Random().nextInt(3) + 1;
+        return card;
     }
 
     public static Game addGame() {
         Game game = new Game();
         gameMap.put(game.id, game);
         return game;
+    }
+
+    public boolean checkMove(int move) {
+        return card == move;
     }
 
     public static Game getGame(String id) {

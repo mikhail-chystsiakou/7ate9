@@ -8,11 +8,14 @@ import com.yatty.sevennine.backend.model.Player;
 import com.yatty.sevennine.backend.util.Constants;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.Channel;
 
 public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> {
+    private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ConnectRequest msg) throws Exception {
@@ -27,12 +30,15 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 e.cause().printStackTrace();
             }
         }).sync();
-        Player player = new Player(msg.getName());
-        player.setRemoteAddress(ctx.channel());
         Game game = Game.getGame();
         if (game == null) {
             game = Game.addGame();
         }
+
+        Player player = new Player(msg.getName());
+        player.setRemoteAddress(peerAddress);
+        player.setGame(game);
+        game.addPlayer(player);
 
         ConnectResponse response = new ConnectResponse();
         response.setGameId(game.getId());
@@ -46,18 +52,26 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         }).sync();
 
         // game started
-        game.addPlayer(player);
         if (game.getPlayersNum() == Game.PLAYERS_NUM) {
             System.out.println("Sending game started event");
             game.getPlayers().forEach((p) -> {
-                GameStartedEvent gameStartedEvent = new GameStartedEvent(Game.generateNextMove());
-                p.getRemoteAddress().writeAndFlush(gameStartedEvent).addListener((e) -> {
-                    if (e.isSuccess()) {
-                        System.out.println("Game start message sent to "+ player.getName());
-                    } else {
-                        e.cause().printStackTrace();
-                    }
-                });
+                GameStartedEvent gameStartedEvent = new GameStartedEvent(p.getGame().generateNextMove());
+                // TODO fix for real multi-threading
+                try {
+                    ctx.channel().disconnect().sync();
+                    ctx.channel().connect(p.getRemoteAddress());
+                    ctx.channel().writeAndFlush(gameStartedEvent).addListener((e) -> {
+                        if (e.isSuccess()) {
+                            System.out.println("Game start message sent to "+ player.getName());
+                        } else {
+                            logger.warn("Can not send message to remote peer: {}", e);
+                            e.cause().printStackTrace();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    logger.warn("Unexpected exception: {}", e);
+                }
+
             });
         }
     }

@@ -2,12 +2,18 @@ package com.yatty.sevennine.backend;
 
 import com.yatty.sevennine.backend.handlers.ConnectHandler;
 import com.yatty.sevennine.backend.handlers.DisconnectHandler;
+import com.yatty.sevennine.backend.handlers.FinalCleanupHandler;
+import com.yatty.sevennine.backend.handlers.MoveRequestHandler;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.slf4j.Logger;
@@ -26,17 +32,27 @@ public class UDPServerStub {
     }
 
     public void start(Properties environmentProperties) throws IOException, InterruptedException {
+//        EventLoopGroup group = new NioEventLoopGroup(5);
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
+//                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+//                    .option(EpollChannelOption.SO_REUSEPORT, true)
                     .channel(NioDatagramChannel.class)
                     .handler(new ServerChannelInitializer());
             InetSocketAddress connectionPort = new InetSocketAddress(
                     Integer.valueOf(environmentProperties.getProperty(PropertiesProvider.Environment.PORT))
             );
-            System.out.println("Server started...");
+            logger.debug("Server started...");
             b.bind(connectionPort).sync().channel().closeFuture().await();
+//            ChannelFuture future;
+//            for(int i = 0; i < 5; ++i) {
+//                future = b.bind(connectionPort).await();
+//                if (!future.isSuccess()) {
+//                    logger.error("Fail to bind to {}", connectionPort);
+//                }
+//            }
         } finally {
             group.shutdownGracefully();
         }
@@ -47,8 +63,10 @@ public class UDPServerStub {
         protected void initChannel(NioDatagramChannel ch) throws Exception {
             ch.pipeline().addFirst("decodeHandler", new JsonMessageDecoder());
             ch.pipeline().addLast("connectHandler", new ConnectHandler());
+            ch.pipeline().addLast("moveRequestHandler", new MoveRequestHandler());
             ch.pipeline().addLast("disconnectHandler", new DisconnectHandler());
             ch.pipeline().addLast("encodeHandler", new JsonMessageEncoder());
+            ch.pipeline().addLast("cleanupHandler", new FinalCleanupHandler());
         }
     }
 }
