@@ -2,12 +2,15 @@ package com.yatty.sevennine.backend.handlers;
 
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.ConnectResponse;
+import com.yatty.sevennine.api.dto.GameStartedEvent;
 import com.yatty.sevennine.backend.model.Game;
+import com.yatty.sevennine.backend.model.Player;
 import com.yatty.sevennine.backend.util.Constants;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.net.InetSocketAddress;
+import java.nio.channels.Channel;
 
 public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> {
 
@@ -24,8 +27,15 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 e.cause().printStackTrace();
             }
         }).sync();
+        Player player = new Player(msg.getName());
+        player.setRemoteAddress(ctx.channel());
+        Game game = Game.getGame();
+        if (game == null) {
+            game = Game.addGame();
+        }
+
         ConnectResponse response = new ConnectResponse();
-        response.setGameId(Game.addGame());
+        response.setGameId(game.getId());
         response.setSucceed(true);
         ctx.channel().writeAndFlush(response).addListener((e) -> {
             if (e.isSuccess()) {
@@ -34,5 +44,21 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 e.cause().printStackTrace();
             }
         }).sync();
+
+        // game started
+        game.addPlayer(player);
+        if (game.getPlayersNum() == Game.PLAYERS_NUM) {
+            System.out.println("Sending game started event");
+            game.getPlayers().forEach((p) -> {
+                GameStartedEvent gameStartedEvent = new GameStartedEvent(Game.generateNextMove());
+                p.getRemoteAddress().writeAndFlush(gameStartedEvent).addListener((e) -> {
+                    if (e.isSuccess()) {
+                        System.out.println("Game start message sent to "+ player.getName());
+                    } else {
+                        e.cause().printStackTrace();
+                    }
+                });
+            });
+        }
     }
 }

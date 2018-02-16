@@ -7,6 +7,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public class GameStartedEvent {
     private int card;
 
+    public GameStartedEvent(int card) {
+        this.card = card;
+    }
+
     public int getCard() {
         return card;
     }
