@@ -22,9 +22,14 @@ import java.util.Properties;
 public class UDPServer {
     private static final Logger logger = LoggerFactory.getLogger(UDPServer.class);
 
-    public static void main(String[] args) throws Exception {
-        Properties environmentProperties = PropertiesProvider.getEnvironmentProperties();
-        new UDPServer().start(environmentProperties);
+    public static void main(String[] args) {
+        Properties environmentProperties = null;
+        try {
+            environmentProperties = PropertiesProvider.getEnvironmentProperties();
+            new UDPServer().start(environmentProperties);
+        } catch (IOException | InterruptedException e) {
+            logger.error("Can not initialize server", e);
+        }
     }
 
     public void start(Properties environmentProperties) throws IOException, InterruptedException {

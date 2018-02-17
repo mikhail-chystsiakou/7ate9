@@ -8,6 +8,12 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Properties;
 
+/**
+ * Serves as property loader and holder.
+ *
+ * @author Mike
+ * @version 17/02/18
+ */
 public class PropertiesProvider {
     private static final Logger logger = LoggerFactory.getLogger(PropertiesProvider.class);
     private static HashMap<String, Properties> propertiesCache = new HashMap<>();

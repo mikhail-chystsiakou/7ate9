@@ -13,13 +13,26 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
+/**
+ * Processes users' moves.
+ * If move was illegal, sends {@link MoveRejectedResponse} back to user.
+ * If move was valid, sends {@link NewStateEvent} for all users with name
+ * of user, that made right move.
+ *
+ * @author Mike
+ * @version 17/02/18
+ */
 public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest> {
     private static final Logger logger = LoggerFactory.getLogger(MoveRequestHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MoveRequest msg) throws Exception {
-        logger.trace("Making request...");
-        Game game = Game.getGame(msg.getGameId());
+        logger.trace("Player making move...");
+        Game game = Game.getGame();
+        if (game == null) {
+            logger.warn("Fuck, game id is null");
+            return;
+        }
         if (game.checkMove(msg.getMove())) {
             NewStateEvent newStateEvent = new NewStateEvent();
             Player player = null;
@@ -50,7 +63,14 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         } else {
             MoveRejectedResponse response = new MoveRejectedResponse();
             response.setMove(msg.getMove());
-            logger.debug("Move {} rejected", msg.getMove());
+
+            InetSocketAddress address = ctx.channel().attr(Constants.PEER_ADDRESS_KEY).get();
+
+            logger.debug("Move {} rejected for {}", msg.getMove(), address);
+
+            ctx.channel().disconnect().sync();
+            ctx.channel().connect(address);
+
             ctx.channel().writeAndFlush(response);
         }
     }

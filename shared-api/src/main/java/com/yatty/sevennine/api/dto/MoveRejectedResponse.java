@@ -1,10 +1,11 @@
 package com.yatty.sevennine.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MoveRejectedResponse {
+    public static final String TYPE = "MoveRejectedResponse";
     private int moveNumber;
     private int move;
     private String description;
@@ -31,5 +32,19 @@ public class MoveRejectedResponse {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)
+    public String getTYPE() {
+        return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "MoveRejectedResponse{" +
+                "moveNumber=" + moveNumber +
+                ", move=" + move +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

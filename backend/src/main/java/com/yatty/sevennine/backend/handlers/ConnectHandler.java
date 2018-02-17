@@ -50,6 +50,8 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         player.setGame(game);
         game.addPlayer(player);
 
+        logger.debug("Player {} added from message {}", player, msg);
+
         ConnectResponse response = new ConnectResponse();
         response.setGameId(game.getId());
         response.setSucceed(true);
@@ -61,17 +63,23 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
             }
         }).sync();
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            logger.warn("Unexpected exception during delay", e);
+        }
+
         // game started
         if (game.getPlayersNum() == Game.PLAYERS_NUM) {
+            GameStartedEvent gameStartedEvent = new GameStartedEvent(game.generateNextMove());
             game.getPlayers().forEach((p) -> {
-                GameStartedEvent gameStartedEvent = new GameStartedEvent(p.getGame().generateNextMove());
                 // TODO fix for real multi-threading
                 try {
                     ctx.channel().disconnect().sync();
                     ctx.channel().connect(p.getRemoteAddress());
                     ctx.channel().writeAndFlush(gameStartedEvent).addListener((e) -> {
                         if (e.isSuccess()) {
-                            logger.debug("Game start message sent to '{}' ({})", player.getName(), player.getRemoteAddress());
+                            logger.debug("Game start message {} sent to '{}' ({})", gameStartedEvent, p.getName(), p.getRemoteAddress());
                         } else {
                             logger.warn("Can not send message to remote peer: {}", e);
                             e.cause().printStackTrace();

@@ -2,6 +2,12 @@ package com.yatty.sevennine.backend.model;
 
 import java.net.InetSocketAddress;
 
+/**
+ * Represents user in game.
+ *
+ * @author Mike
+ * @version 17/02/18
+ */
 public class Player {
     private String name;
     private int score;
@@ -30,5 +36,15 @@ public class Player {
 
     public void setRemoteAddress(InetSocketAddress remoteAddress) {
         this.remoteAddress = remoteAddress;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "name='" + name + '\'' +
+                ", score=" + score +
+                ", game=" + game +
+                ", remoteAddress=" + remoteAddress +
+                '}';
     }
 }

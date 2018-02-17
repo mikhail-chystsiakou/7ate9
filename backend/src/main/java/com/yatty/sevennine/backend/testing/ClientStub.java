@@ -43,6 +43,7 @@ public class ClientStub {
 
         System.out.println("Client started");
         Channel c = b.connect().sync().channel();
+        b.clone().bind(Integer.valueOf(p.getProperty(PropertiesProvider.Environment.PORT)));
         c.writeAndFlush(new ConnectRequest("Mike")).addListener((e) -> {
             if (e.isSuccess()) {
                 System.out.println("Message sent");

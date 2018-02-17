@@ -1,10 +1,11 @@
 package com.yatty.sevennine.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NewStateEvent {
+    public static final String TYPE = "NewStateEvent";
     private int moveNumber;
     private int move;
     private String player;
@@ -49,5 +50,10 @@ public class NewStateEvent {
 
     public void setNextCard(int nextCard) {
         this.nextCard = nextCard;
+    }
+
+    @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)
+    public String getTYPE() {
+        return TYPE;
     }
 }

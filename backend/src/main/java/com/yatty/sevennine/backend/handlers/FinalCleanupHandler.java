@@ -14,10 +14,15 @@ public class FinalCleanupHandler extends ChannelDuplexHandler {
         logger.trace("Disconnecting...");
         ctx.channel().disconnect().addListener((e) -> {
             if (e.isSuccess()) {
-                logger.debug("Disconnected");
+                logger.trace("Disconnected");
             } else {
                 logger.debug("Can not disconnect: {}", e.cause());
             }
         }).sync();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.warn("Cleanup handler caught an exception: ", cause);
     }
 }

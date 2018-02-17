@@ -1,15 +1,23 @@
 package com.yatty.sevennine.backend.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
+/**
+ * Represents one stateful game object.
+ *
+ * @version 017/02/18
+ * @author Mike
+ */
 public class Game {
+    public static final Logger logger = LoggerFactory.getLogger(Game.class);
     public static final int PLAYERS_NUM = 2;
     private static Map<String, Game> gameMap = new HashMap<>();
 
     private String id = UUID.randomUUID().toString();
-
     private List<Player> players = new ArrayList<>();
-
     private int card;
 
 
@@ -29,9 +37,9 @@ public class Game {
         return id;
     }
 
-    // TODO: kill me
     public int generateNextMove() {
         card = new Random().nextInt(3) + 1;
+        logger.debug("Next game card: {}", card);
         return card;
     }
 
@@ -49,7 +57,7 @@ public class Game {
         return gameMap.get(id);
     }
 
-    // TODO: delete me
+    // tmp first spring stub
     public static Game getGame() {
         if (gameMap.size() == 0 ) {
             return null;

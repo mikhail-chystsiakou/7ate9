@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.ConnectResponse;
+import com.yatty.sevennine.api.dto.DisconnectRequest;
+import com.yatty.sevennine.api.dto.MoveRequest;
 import com.yatty.sevennine.backend.testing.TestMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
@@ -20,7 +22,6 @@ import static com.yatty.sevennine.backend.util.Constants.PEER_ADDRESS_KEY;
 
 public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> {
     private static final Logger logger = LoggerFactory.getLogger(JsonMessageDecoder.class);
-    private static final String TYPE_FIELD = "_type";
     private static final Map<String, Class<?>> classTypeMapping;
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -28,7 +29,8 @@ public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> 
         classTypeMapping = new HashMap<>();
         classTypeMapping.put(TestMessage.TYPE, TestMessage.class);
         classTypeMapping.put(ConnectRequest.TYPE, ConnectRequest.class);
-        classTypeMapping.put(ConnectResponse.TYPE, ConnectResponse.class);
+        classTypeMapping.put(MoveRequest.TYPE, MoveRequest.class);
+        classTypeMapping.put(DisconnectRequest.TYPE, DisconnectRequest.class);
     }
 
 
@@ -45,7 +47,8 @@ public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> 
             logger.debug("Decoded: {}", v);
             out.add(v);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("Exception during decoding", e);
+            throw e;
         }
     }
 }

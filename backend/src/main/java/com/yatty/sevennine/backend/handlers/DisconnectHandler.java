@@ -14,13 +14,5 @@ public class DisconnectHandler extends SimpleChannelInboundHandler<DisconnectReq
     protected void channelRead0(ChannelHandlerContext ctx, DisconnectRequest msg) throws Exception {
         logger.trace("Disconnecting...");
         Game.resetGame();
-
-//        ctx.channel().disconnect().addListener((e) -> {
-//            if (e.isSuccess()) {
-//                logger.debug("Disconnected");
-//            } else {
-//                logger.debug("Can not disconnect: {}", e.cause());
-//            }
-//        }).sync();
     }
 }
