@@ -27,24 +27,32 @@ public class Deck {
 
         Card.Color[] colors = Card.Color.values();
         for (int i = 0; i < playersNumber * DEFAULT_CARDS_AMOUNT + 1; i++) {
-            cardList.add(new Card(rnd.nextInt(11 - 1), rnd.nextInt(4-1), colors[rnd.nextInt(3)]));
+            cardList.add(new Card(rnd.nextInt(11 - 1), rnd.nextInt(4 - 1), colors[rnd.nextInt(3)]));
         }
     }
 
     public void shuffle() {
+        if (cardList!=null && !cardList.isEmpty())
         for (int i = 0; i < playersNumber * DEFAULT_CARDS_AMOUNT; i++)
-            Collections.swap(cardList, rnd.nextInt(), rnd.nextInt());
+            Collections.swap(cardList, rnd.nextInt(cardList.size()), rnd.nextInt(cardList.size()));
     }
 
     public ArrayList<Card> pullCards() {
-        ArrayList<Card> playerList = new ArrayList<>();
-        for (int i = 0; i < DEFAULT_CARDS_AMOUNT; i++) {
-            playerList.add(cardList.remove(0));
+        if (cardList != null && !cardList.isEmpty()) {
+            ArrayList<Card> playerList = new ArrayList<>();
+            for (int i = 0; i < DEFAULT_CARDS_AMOUNT; i++) {
+                playerList.add(cardList.remove(0));
+            }
+            return playerList;
+        } else {
+            return null;
         }
-        return playerList;
     }
 
     public Card getCard() {
-        return cardList.remove(rnd.nextInt(cardList.size()));
+        if (cardList!=null && !cardList.isEmpty() && cardList.size()%2 != 0)
+            return cardList.remove(rnd.nextInt(cardList.size()));
+        else
+            return null;
     }
 }
