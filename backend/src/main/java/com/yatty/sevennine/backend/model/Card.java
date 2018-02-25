@@ -34,4 +34,9 @@ public class Card {
     public Color getColor() {
         return color;
     }
+
+    @Override
+    public String toString() {
+        return largeNumeral + "±" + smallNumeral + color;
+    }
 }

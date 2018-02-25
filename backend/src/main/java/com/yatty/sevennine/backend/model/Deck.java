@@ -18,16 +18,21 @@ public class Deck {
     private static final int DEFAULT_CARDS_AMOUNT = 18;     //  в полной колоде 73 карты, т.е. делим на максимальное число игроков(4) и получаем 18 карт на одного игрока
 
     public Deck() {
+        playersNumber = 2;
         rnd = new Random(System.currentTimeMillis());
         cardList = new ArrayList<>();
     }
 
+    private Deck(ArrayList<Card> list) {
+        cardList = (list != null) ? new ArrayList<>(list) : null;
+    }
+
     public void generate(int pn) {
-        playersNumber = pn;
+        playersNumber = (pn > 1 && pn < 5) ? pn : 2;
 
         Card.Color[] colors = Card.Color.values();
         for (int i = 0; i < playersNumber * DEFAULT_CARDS_AMOUNT + 1; i++) {
-            cardList.add(new Card(rnd.nextInt(11 - 1), rnd.nextInt(4 - 1), colors[rnd.nextInt(3)]));
+            cardList.add(new Card(rnd.nextInt(10) + 1, rnd.nextInt(3) + 1, colors[rnd.nextInt(3)]));
         }
     }
 
@@ -49,10 +54,28 @@ public class Deck {
         }
     }
 
-    public Card getCard() {
+    public Deck pullCards(int asDeck) {
+        return new Deck(pullCards());
+    }
+
+    public Card getStartCard() {
         if (cardList!=null && !cardList.isEmpty() && cardList.size()%2 != 0)
             return cardList.remove(rnd.nextInt(cardList.size()));
         else
             return null;
+    }
+
+    public int getSize() {
+        return cardList.size();
+    }
+
+    public String toString() {
+        String string = "";
+        if (cardList != null) {
+            for (int i = 0; i < cardList.size(); i++)
+                string += cardList.get(i) + "; ";
+            return string;
+        }
+        return null;
     }
 }
