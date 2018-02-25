@@ -18,7 +18,7 @@ public class Deck {
     private static final int DEFAULT_CARDS_AMOUNT = 18;     //  в полной колоде 73 карты, т.е. делим на максимальное число игроков(4) и получаем 18 карт на одного игрока
 
     public Deck() {
-        playersNumber = 2;
+        playersNumber = 0;
         rnd = new Random(System.currentTimeMillis());
         cardList = new ArrayList<>();
     }
@@ -28,11 +28,13 @@ public class Deck {
     }
 
     public void generate(int pn) {
-        playersNumber = (pn > 1 && pn < 5) ? pn : 2;
+        if (playersNumber == 0) {
+            playersNumber = (pn > 1 && pn < 5) ? pn : 2;    // TODO: определить дефолтное значение количества игроков
 
-        Card.Color[] colors = Card.Color.values();
-        for (int i = 0; i < playersNumber * DEFAULT_CARDS_AMOUNT + 1; i++) {
-            cardList.add(new Card(rnd.nextInt(10) + 1, rnd.nextInt(3) + 1, colors[rnd.nextInt(3)]));
+            Card.Color[] colors = Card.Color.values();
+            for (int i = 0; i < playersNumber * DEFAULT_CARDS_AMOUNT + 1; i++) {
+                cardList.add(new Card(rnd.nextInt(10) + 1, rnd.nextInt(3) + 1, colors[rnd.nextInt(3)]));
+            }
         }
     }
 
