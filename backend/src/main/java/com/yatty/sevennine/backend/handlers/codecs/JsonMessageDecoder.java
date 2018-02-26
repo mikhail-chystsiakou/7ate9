@@ -3,7 +3,6 @@ package com.yatty.sevennine.backend.handlers.codecs;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.ConnectRequest;
-import com.yatty.sevennine.api.dto.ConnectResponse;
 import com.yatty.sevennine.api.dto.DisconnectRequest;
 import com.yatty.sevennine.api.dto.MoveRequest;
 import com.yatty.sevennine.backend.testing.TestMessage;
@@ -20,6 +19,12 @@ import java.util.Map;
 
 import static com.yatty.sevennine.backend.util.Constants.PEER_ADDRESS_KEY;
 
+/**
+ * Used to decode inbound server messages aka requests.
+ *
+ * @author Mike
+ * @version 17.02.17
+ */
 public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> {
     private static final Logger logger = LoggerFactory.getLogger(JsonMessageDecoder.class);
     private static final Map<String, Class<?>> classTypeMapping;

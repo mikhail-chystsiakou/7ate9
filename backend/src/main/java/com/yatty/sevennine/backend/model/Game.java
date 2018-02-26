@@ -6,20 +6,20 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Represents one stateful game object.
+ * Represents the single (just for now) stateful game object.
  *
- * @version 017/02/18
+ * @version 17/02/18
  * @author Mike
  */
 public class Game {
     public static final Logger logger = LoggerFactory.getLogger(Game.class);
     public static final int PLAYERS_NUM = 2;
+    public static final int INITIAL_PLAYER_CARD_NUM = 10;   // TODO: use constant from Deck class
     private static Map<String, Game> gameMap = new HashMap<>();
 
     private String id = UUID.randomUUID().toString();
     private List<Player> players = new ArrayList<>();
     private int card;
-
 
     public void addPlayer(Player player) {
         players.add(player);
@@ -65,6 +65,8 @@ public class Game {
             return gameMap.values().iterator().next();
         }
     }
+
+    public void sendMessageToPlayers()
 
     public static void resetGame() {
         gameMap.clear();

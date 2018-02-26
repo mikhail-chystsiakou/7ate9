@@ -34,6 +34,7 @@ public class UDPServer {
 
     public void start(Properties environmentProperties) throws IOException, InterruptedException {
 //        EventLoopGroup group = new NioEventLoopGroup(5);
+        // TODO: proper bootstrap. Current version creates single channel for all connections
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();

@@ -38,6 +38,14 @@ public class Player {
         this.remoteAddress = remoteAddress;
     }
 
+    public void incScore() {
+        score++;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
     @Override
     public String toString() {
         return "Player{" +
