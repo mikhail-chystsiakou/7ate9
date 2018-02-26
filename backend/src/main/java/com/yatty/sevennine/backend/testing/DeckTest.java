@@ -5,9 +5,9 @@ import com.yatty.sevennine.backend.model.Deck;
 public class DeckTest {
     public static void main(String args[]) {
         for (int i = -5; i < 10; i++) {
-            Deck deck = new Deck();
+            Deck deck = new Deck(i);
             // generation test
-            deck.generate(i);
+            deck.generate();
             System.out.println("Generated deck: " + deck);
             System.out.println("Deck size: " + deck.getSize());
             // shuffle test

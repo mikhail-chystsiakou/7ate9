@@ -7,36 +7,24 @@ package com.yatty.sevennine.backend.model;
  * @author Dmitry
  */
 public class Card {
-    private int largeNumeral;
-    private int smallNumeral;
-    private Color color;
+    private int value;
+    private int modifier;
 
-    public static enum Color {
-        RED,
-        GREEN,
-        BLUE
+    public Card(int largeNumber, int smallNumber) {
+        value = largeNumber;
+        modifier = smallNumber;
     }
 
-    public Card(int ln, int sn, Color col) {
-        largeNumeral = ln;
-        smallNumeral = sn;
-        color = col;
+    public int getValue() {
+        return value;
     }
 
-    public int getLargeNumeral() {
-        return largeNumeral;
-    }
-
-    public int getSmallNumeral() {
-        return smallNumeral;
-    }
-
-    public Color getColor() {
-        return color;
+    public int getModifier() {
+        return modifier;
     }
 
     @Override
     public String toString() {
-        return largeNumeral + "±" + smallNumeral + color;
+        return value + "±" + modifier;
     }
 }
