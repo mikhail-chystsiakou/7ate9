@@ -34,6 +34,7 @@ public class CardRotator {
                     synchronized (locker) {
                         timeToSleep = (lastRefreshed + SLEEP_TIME) - System.currentTimeMillis();
                     }
+
                     Thread.sleep(timeToSleep);
                     if (!working) return;
 

@@ -9,3 +9,5 @@
 Документация проекта находится [здесь](https://github.com/ZoXaL/7ate9-backend/wiki)
 
 Репозиторий клиентской части находится [здесь](https://github.com/Kimentii/7ate9-client)
+
+Команда в trello: https://trello.com/yattyteam
