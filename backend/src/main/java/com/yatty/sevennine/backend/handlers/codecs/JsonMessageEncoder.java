@@ -19,10 +19,13 @@ public class JsonMessageEncoder extends MessageToMessageEncoder<Object> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-        logger.trace("Encoding...");
         ByteBuf byteBuf = Unpooled.buffer();
         ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(byteBuf);
         objectMapper.writeValue((OutputStream) byteBufOutputStream, msg);
+        if (logger.isDebugEnabled()) {
+            String writtenValue = objectMapper.writeValueAsString(msg);
+            logger.debug("Encoded: {}", writtenValue);
+        }
         out.add(byteBuf);
     }
 }

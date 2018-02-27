@@ -1,6 +1,8 @@
 package com.yatty.sevennine.backend.exceptions.io;
 
-public class MessageSendingException extends RuntimeException {
+import com.yatty.sevennine.backend.exceptions.SevenNineException;
+
+public class MessageSendingException extends SevenNineException {
     public MessageSendingException() {
         super();
     }

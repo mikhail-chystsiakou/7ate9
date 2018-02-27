@@ -2,16 +2,17 @@ package com.yatty.sevennine.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yatty.sevennine.api.Card;
 import com.yatty.sevennine.api.GameResult;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NewStateEvent {
     public static final String TYPE = "NewStateEvent";
     private int moveNumber;
-    private int move;
+    private Card move;
     private String moveWinner;
     private boolean lastMove;
-    private int nextCard;
+    private Card nextCard;
     private GameResult gameResult;
 
     public int getMoveNumber() {
@@ -22,11 +23,11 @@ public class NewStateEvent {
         this.moveNumber = moveNumber;
     }
 
-    public int getMove() {
+    public Card getMove() {
         return move;
     }
 
-    public void setMove(int move) {
+    public void setMove(Card move) {
         this.move = move;
     }
 
@@ -46,11 +47,11 @@ public class NewStateEvent {
         this.lastMove = lastMove;
     }
 
-    public int getNextCard() {
+    public Card getNextCard() {
         return nextCard;
     }
 
-    public void setNextCard(int nextCard) {
+    public void setNextCard(Card nextCard) {
         this.nextCard = nextCard;
     }
 
@@ -65,5 +66,17 @@ public class NewStateEvent {
     @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)
     public String getTYPE() {
         return TYPE;
+    }
+
+    @Override
+    public String toString() {
+        return "NewStateEvent{" +
+                "moveNumber=" + moveNumber +
+                ", move=" + move +
+                ", moveWinner='" + moveWinner + '\'' +
+                ", lastMove=" + lastMove +
+                ", nextCard=" + nextCard +
+                ", gameResult=" + gameResult +
+                '}';
     }
 }

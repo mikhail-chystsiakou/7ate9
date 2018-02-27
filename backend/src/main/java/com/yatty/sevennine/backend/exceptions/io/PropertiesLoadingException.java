@@ -1,6 +1,8 @@
 package com.yatty.sevennine.backend.exceptions.io;
 
-public class PropertiesLoadingException extends RuntimeException {
+import com.yatty.sevennine.backend.exceptions.SevenNineException;
+
+public class PropertiesLoadingException extends SevenNineException {
     public PropertiesLoadingException() {
         super();
     }

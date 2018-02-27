@@ -5,13 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.DisconnectRequest;
 import com.yatty.sevennine.api.dto.MoveRequest;
+import com.yatty.sevennine.api.dto.TestRequest;
 import com.yatty.sevennine.backend.testing.TestMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,7 @@ import static com.yatty.sevennine.backend.util.Constants.PEER_ADDRESS_KEY;
 
 /**
  * Used to decode inbound server messages aka requests.
+ * Also connects channel to the sender.
  *
  * @author Mike
  * @version 17.02.17
@@ -36,13 +40,13 @@ public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> 
         classTypeMapping.put(ConnectRequest.TYPE, ConnectRequest.class);
         classTypeMapping.put(MoveRequest.TYPE, MoveRequest.class);
         classTypeMapping.put(DisconnectRequest.TYPE, DisconnectRequest.class);
+        classTypeMapping.put(TestRequest.TYPE, TestRequest.class);
     }
 
 
     @Override
     protected void decode(ChannelHandlerContext ctx, DatagramPacket msg, List<Object> out) throws Exception {
         logger.trace("Decoding...");
-        ctx.channel().attr(PEER_ADDRESS_KEY).set(msg.sender());
         try {
             String data = msg.content().toString(StandardCharsets.UTF_8);
             JsonNode node = new ObjectMapper().readTree(data);
@@ -55,5 +59,24 @@ public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> 
             logger.warn("Exception during decoding", e);
             throw e;
         }
+
+        ctx.channel().attr(PEER_ADDRESS_KEY).set(msg.sender());
+        if (!ctx.channel().isActive()) {
+            connectChannelToClient(ctx.channel(), msg.sender());
+        } else if (ctx.channel().isActive() && !msg.sender().equals(ctx.channel().remoteAddress())) {
+            logger.debug("Connecting to new peer {}", msg.sender());
+            ctx.channel().disconnect().sync();
+            connectChannelToClient(ctx.channel(), msg.sender());
+        }
+    }
+
+    private void connectChannelToClient(Channel channel, SocketAddress client) throws InterruptedException {
+        channel.connect(client).addListener((e) -> {
+            if (e.isSuccess()) {
+                logger.trace("Connected to {}", client);
+            } else {
+                logger.warn("Failed to connect: ", e.cause());
+            }
+        }).sync();
     }
 }

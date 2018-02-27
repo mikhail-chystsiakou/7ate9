@@ -23,7 +23,7 @@ public class PlayerMessageSender {
      */
     public static void sendMessage(Channel channel, InetSocketAddress playerAddress, Object message) {
         try {
-            if (channel.isActive()) {
+            if (channel.isActive() && !playerAddress.equals(channel.remoteAddress())) {
                 channel.disconnect().sync();
             }
             channel.connect(playerAddress).sync();
@@ -43,7 +43,7 @@ public class PlayerMessageSender {
      * @param message   message to send
      * @throws MessageSendingException  if any technical error occurs
      */
-    public void sendMessage(Channel channel, Player player, Object message) {
+    public static void sendMessage(Channel channel, Player player, Object message) {
         sendMessage(channel, player.getRemoteAddress(), message);
     }
 

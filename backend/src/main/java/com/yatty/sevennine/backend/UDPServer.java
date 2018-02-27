@@ -1,9 +1,7 @@
 package com.yatty.sevennine.backend;
 
-import com.yatty.sevennine.backend.handlers.ConnectHandler;
-import com.yatty.sevennine.backend.handlers.DisconnectHandler;
-import com.yatty.sevennine.backend.handlers.FinalCleanupHandler;
-import com.yatty.sevennine.backend.handlers.MoveRequestHandler;
+import com.yatty.sevennine.api.dto.TestRequest;
+import com.yatty.sevennine.backend.handlers.*;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
@@ -65,6 +63,7 @@ public class UDPServer {
         protected void initChannel(NioDatagramChannel ch) throws Exception {
             ch.pipeline().addFirst("decodeHandler", new JsonMessageDecoder());
             ch.pipeline().addLast("connectHandler", new ConnectHandler());
+            ch.pipeline().addLast("testHandler", new TestHandler());
             ch.pipeline().addLast("moveRequestHandler", new MoveRequestHandler());
             ch.pipeline().addLast("disconnectHandler", new DisconnectHandler());
             ch.pipeline().addLast("encodeHandler", new JsonMessageEncoder());

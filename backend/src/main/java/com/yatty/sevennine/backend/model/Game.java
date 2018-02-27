@@ -1,74 +1,87 @@
 package com.yatty.sevennine.backend.model;
 
+import com.yatty.sevennine.api.Card;
+import com.yatty.sevennine.backend.exceptions.SevenNineException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.util.*;
 
 /**
- * Represents the single (just for now) stateful game object.
+ * Represents the stateful game object.
  *
- * @version 17/02/18
+ * @version 26/02/18
  * @author Mike
  */
 public class Game {
     public static final Logger logger = LoggerFactory.getLogger(Game.class);
-    public static final int PLAYERS_NUM = 2;
     public static final int INITIAL_PLAYER_CARD_NUM = 10;   // TODO: use constant from Deck class
-    private static Map<String, Game> gameMap = new HashMap<>();
+    public static final int DEFAULT_PLAYERS_NUM = 2;   // TODO: to be deleted after lobby implementation
 
     private String id = UUID.randomUUID().toString();
     private List<Player> players = new ArrayList<>();
-    private int card;
+    private Card topCard;
+    private int moveNumber;
+    private int playersNum;
 
-    public void addPlayer(Player player) {
+    public Game(int playersNum) {
+        this.playersNum = playersNum;
+    }
+
+    /**
+     * Adds player to players list.
+     *
+     * @param   player              object to add
+     * @return  true                if the game is full and next player can not be added
+     * @throws  SevenNineException  on attempt to add player to the full game
+     */
+    public boolean addPlayer(Player player) {
+        if (players.size() >= playersNum) {
+            throw new SevenNineException(
+                MessageFormatter.format(
+                    "Can not add player '{}' to game '{}': the game is full",
+                    player.getGame(),
+                    this.id
+                ).getMessage());
+        }
+
         players.add(player);
+        return players.size() >= playersNum;
     }
 
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
     }
 
-    public int getPlayersNum() {
-        return players.size();
-    }
-
     public String getId() {
         return id;
     }
 
-    public int generateNextMove() {
-        card = new Random().nextInt(3) + 1;
-        logger.debug("Next game card: {}", card);
-        return card;
-    }
+    public boolean acceptMove(Card move) {
+        logger.debug("Accepting move {} for topCard {}", move, topCard);
+        logger.debug("{} - {} - {}", topCard.getValue(), (move.getValue() + topCard.getModifier()) % 10,
+                (move.getValue() - topCard.getModifier()) % 10);
+        boolean validMove = topCard.getValue() % 10 == (move.getValue() + topCard.getModifier()) % 10
+                || topCard.getValue() % 10 == (move.getValue() - topCard.getModifier()) % 10;
 
-    public static Game addGame() {
-        Game game = new Game();
-        gameMap.put(game.id, game);
-        return game;
-    }
-
-    public boolean checkMove(int move) {
-        return card == move;
-    }
-
-    public static Game getGame(String id) {
-        return gameMap.get(id);
-    }
-
-    // tmp first spring stub
-    public static Game getGame() {
-        if (gameMap.size() == 0 ) {
-            return null;
-        } else {
-            return gameMap.values().iterator().next();
+        if (validMove) {
+            topCard = move;
+            moveNumber++;
         }
+        return validMove;
     }
 
-    public void sendMessageToPlayers()
+    public int getMoveNumber() {
+        return moveNumber;
+    }
 
-    public static void resetGame() {
-        gameMap.clear();
+    public boolean isFull() {
+        return players.size() >= playersNum;
+    }
+
+    public void setTopCard(Card topCard) {
+        logger.debug("Game top card updated: {}", topCard);
+        this.topCard = topCard;
     }
 }

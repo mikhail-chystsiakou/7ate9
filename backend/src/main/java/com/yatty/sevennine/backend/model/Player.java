@@ -1,6 +1,9 @@
 package com.yatty.sevennine.backend.model;
 
+import com.yatty.sevennine.api.Card;
+
 import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * Represents user in game.

@@ -1,4 +1,4 @@
-package com.yatty.sevennine.backend.model;
+package com.yatty.sevennine.api;
 
 /**
  * Represents card model.
@@ -9,6 +9,10 @@ package com.yatty.sevennine.backend.model;
 public class Card {
     private int value;
     private int modifier;
+
+    public Card() {
+
+    }
 
     public Card(int largeNumber, int smallNumber) {
         value = largeNumber;

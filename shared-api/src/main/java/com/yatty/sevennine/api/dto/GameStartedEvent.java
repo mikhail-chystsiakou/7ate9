@@ -2,22 +2,30 @@ package com.yatty.sevennine.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yatty.sevennine.api.Card;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameStartedEvent {
     public static final String TYPE = "GameStartedEvent";
-    private int card;
+    private Card firstCard;
+    private List<Card> playerCards;
 
-    public GameStartedEvent(int card) {
-        this.card = card;
+    public List<Card> getPlayerCards() {
+        return playerCards;
     }
 
-    public int getCard() {
-        return card;
+    public void setPlayerCards(List<Card> playerCards) {
+        this.playerCards = playerCards;
     }
 
-    public void setCard(int card) {
-        this.card = card;
+    public Card getFirstCard() {
+        return firstCard;
+    }
+
+    public void setFirstCard(Card firstCard) {
+        this.firstCard = firstCard;
     }
 
     @JsonProperty(value="_type", access = JsonProperty.Access.READ_ONLY)
@@ -28,7 +36,8 @@ public class GameStartedEvent {
     @Override
     public String toString() {
         return "GameStartedEvent{" +
-                "card=" + card +
+                "firstCard=" + firstCard +
+                ", playerCards=" + playerCards +
                 '}';
     }
 }
