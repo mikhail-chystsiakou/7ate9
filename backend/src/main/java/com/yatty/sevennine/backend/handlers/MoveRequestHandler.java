@@ -1,12 +1,16 @@
 package com.yatty.sevennine.backend.handlers;
 
 import com.yatty.sevennine.api.Card;
+import com.yatty.sevennine.api.GameResult;
+import com.yatty.sevennine.api.PlayerResult;
 import com.yatty.sevennine.api.dto.MoveRejectedResponse;
 import com.yatty.sevennine.api.dto.MoveRequest;
 import com.yatty.sevennine.api.dto.NewStateEvent;
+import com.yatty.sevennine.backend.exceptions.security.UnauthorizedAccessException;
 import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.Player;
+import com.yatty.sevennine.backend.util.CardRotator;
 import com.yatty.sevennine.backend.util.Constants;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,7 +40,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MoveRequest msg) throws Exception {
         logger.debug("Got move request: {}", msg.getMove());
-        // TODO: get game by id from request
+        // TODO: get game by id from request during lobby implementation
         Game game = GameRegistry.getFirstGame();
         if (game == null) {
             game = new Game(Game.DEFAULT_PLAYERS_NUM);
@@ -44,13 +48,18 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         }
 
         InetSocketAddress clientAddress = ctx.channel().attr(Constants.PEER_ADDRESS_KEY).get();
-        Player moveAuthor = game.getPlayers().stream().filter(p -> p.getRemoteAddress().equals(clientAddress)).findFirst().orElse(null);
+        Player moveAuthor = game.getPlayers().stream().filter(
+                p -> p.getRemoteAddress().equals(clientAddress)
+        ).findFirst().orElseThrow(() -> {
+            UnauthorizedAccessException exception = new UnauthorizedAccessException();
+            exception.setRemoteAddress(clientAddress);
+            return exception;
+        });
+
         if (moveAuthor == null) {
             logger.warn("Address {} is not authenticated, ignoring message {}", clientAddress, msg);
-            return;
-        }
-
-        if (game.acceptMove(msg.getMove())) {
+            processUnregisteredMove(ctx.channel(), clientAddress, msg);
+        } else if (game.acceptMove(msg.getMove())) {
             processRightMove(ctx.channel(), clientAddress, game, moveAuthor, msg.getMove());
         } else {
             processWrongMove(ctx.channel(), clientAddress, msg);
@@ -61,10 +70,25 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
                                   Game game, Player roundWinner, Card move) {
         NewStateEvent newStateEvent = new NewStateEvent();
         newStateEvent.setMoveWinner(roundWinner.getName());
+        CardRotator.refresh();
 
         roundWinner.incScore();
-        if (roundWinner.getScore() >= Game.INITIAL_PLAYER_CARD_NUM) {
+        if (roundWinner.getScore() > Game.INITIAL_PLAYER_CARD_NUM - 2) {
             newStateEvent.setLastMove(true);
+            Player winner = game.getWinner();
+            GameResult gameResult = new GameResult();
+            gameResult.setWinner(winner.getName());
+            for (Player p : game.getPlayers()) {
+                PlayerResult playerResult = new PlayerResult();
+                playerResult.setPlayerName(p.getName());
+                playerResult.setCardsLeft(Game.INITIAL_PLAYER_CARD_NUM - p.getScore());
+                gameResult.addScore(playerResult);
+            }
+            newStateEvent.setGameResult(gameResult);
+
+            GameRegistry.deleteGameById(game.getId());
+            CardRotator.stop();
+
             // TODO: set other fields after NewStateEvent update
         } else {
             newStateEvent.setNextCard(move);

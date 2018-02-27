@@ -11,14 +11,17 @@ public class FinalCleanupHandler extends ChannelDuplexHandler {
     @Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
-        logger.trace("Disconnecting...");
-        ctx.channel().disconnect().addListener((e) -> {
-            if (e.isSuccess()) {
-                logger.trace("Disconnected");
-            } else {
-                logger.debug("Can not disconnect: {}", e.cause());
-            }
-        }).sync();
+        ctx.channel().disconnect().sync();
+//        logger.trace("Disconnecting...");
+//        if (ctx.channel().isActive()) {
+//            ctx.channel().disconnect().addListener((e) -> {
+//                if (e.isSuccess()) {
+//                    logger.trace("Disconnected");
+//                } else {
+//                    logger.debug("Can not disconnect: {}", e.cause());
+//                }
+//            }).sync();
+//        }
     }
 
     @Override

@@ -50,6 +50,14 @@ public class Game {
         return players.size() >= playersNum;
     }
 
+    public Player getWinner() {
+        Player winner = players.get(0);
+        for (Player p : players) {
+            if (winner.getScore() < p.getScore()) winner = p;
+        }
+        return winner;
+    }
+
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
     }
@@ -60,10 +68,14 @@ public class Game {
 
     public boolean acceptMove(Card move) {
         logger.debug("Accepting move {} for topCard {}", move, topCard);
-        logger.debug("{} - {} - {}", topCard.getValue(), (move.getValue() + topCard.getModifier()) % 10,
-                (move.getValue() - topCard.getModifier()) % 10);
-        boolean validMove = topCard.getValue() % 10 == (move.getValue() + topCard.getModifier()) % 10
-                || topCard.getValue() % 10 == (move.getValue() - topCard.getModifier()) % 10;
+
+        int greaterVariant = topCard.getValue() + topCard.getModifier();
+        if (greaterVariant > 10) greaterVariant -= 10;
+        int lesserVariant = topCard.getValue() - topCard.getModifier();
+        if (lesserVariant < 0) lesserVariant += 10;
+
+        boolean validMove = move.getValue() == greaterVariant
+                || move.getValue() == lesserVariant;
 
         if (validMove) {
             topCard = move;

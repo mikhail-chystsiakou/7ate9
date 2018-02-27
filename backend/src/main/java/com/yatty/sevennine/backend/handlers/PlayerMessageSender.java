@@ -23,14 +23,25 @@ public class PlayerMessageSender {
      */
     public static void sendMessage(Channel channel, InetSocketAddress playerAddress, Object message) {
         try {
-            if (channel.isActive() && !playerAddress.equals(channel.remoteAddress())) {
-                channel.disconnect().sync();
-            }
+            logger.debug("Sending message. active: {}, open: {}, remote address {} , playerAddress: {}",
+                    channel.isActive(), channel.isOpen(), channel.remoteAddress(), playerAddress);
+            channel.disconnect().sync();
             channel.connect(playerAddress).sync();
+//            if (!playerAddress.equals(channel.remoteAddress())) {
+//                channel.disconnect().sync();
+//                logger.debug("Channel disconnected. active: {}, open: {}", channel.isActive(), channel.isOpen());
+//                channel.connect(playerAddress).sync();
+//                logger.debug("Channel reconnected");
+//            } else if (!channel.isActive()) {
+//                channel.connect(playerAddress).sync();
+//                logger.debug("Channel reconnected");
+//            }
             channel.writeAndFlush(message).sync();
         } catch (InterruptedException e) {
             throw new MessageSendingException("Interrupted during sending message to "
                     + playerAddress, e);
+        } catch (Exception e) {
+            logger.warn("Exception during sending message: ", e);
         }
     }
 

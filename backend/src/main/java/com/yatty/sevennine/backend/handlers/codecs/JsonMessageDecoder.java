@@ -61,22 +61,5 @@ public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> 
         }
 
         ctx.channel().attr(PEER_ADDRESS_KEY).set(msg.sender());
-        if (!ctx.channel().isActive()) {
-            connectChannelToClient(ctx.channel(), msg.sender());
-        } else if (ctx.channel().isActive() && !msg.sender().equals(ctx.channel().remoteAddress())) {
-            logger.debug("Connecting to new peer {}", msg.sender());
-            ctx.channel().disconnect().sync();
-            connectChannelToClient(ctx.channel(), msg.sender());
-        }
-    }
-
-    private void connectChannelToClient(Channel channel, SocketAddress client) throws InterruptedException {
-        channel.connect(client).addListener((e) -> {
-            if (e.isSuccess()) {
-                logger.trace("Connected to {}", client);
-            } else {
-                logger.warn("Failed to connect: ", e.cause());
-            }
-        }).sync();
     }
 }

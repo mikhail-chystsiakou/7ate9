@@ -8,6 +8,7 @@ import com.yatty.sevennine.backend.model.Deck;
 import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.Player;
+import com.yatty.sevennine.backend.util.CardRotator;
 import com.yatty.sevennine.backend.util.Constants;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -34,13 +35,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         if (game.isFull()) {
             ConnectResponse response = new ConnectResponse();
             response.setSucceed(false);
-            ctx.channel().writeAndFlush(response).addListener((e) -> {
-                if (e.isSuccess()) {
-                    logger.debug("Connection rejecting response {} sent", response);
-                } else {
-                    e.cause().printStackTrace();
-                }
-            }).sync();
+            PlayerMessageSender.sendMessage(ctx.channel(), peerAddress, response);
             return;
         }
 
@@ -54,23 +49,17 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         ConnectResponse response = new ConnectResponse();
         response.setGameId(game.getId());
         response.setSucceed(true);
-        ctx.channel().writeAndFlush(response).addListener((e) -> {
-            if (e.isSuccess()) {
-                logger.debug("Connect response {} sent", response);
-            } else {
-                e.cause().printStackTrace();
-            }
-        }).sync();
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            logger.warn("Unexpected exception during delay", e);
-        }
+        PlayerMessageSender.sendMessage(ctx.channel(), peerAddress, response);
 
         logger.debug("Game {} is full: {}", game.getId(), game.isFull());
         // game started
         if (game.isFull()) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                logger.warn("Unexpected exception during delay", e);
+            }
+            CardRotator.start(ctx.channel(), game.getPlayers());
             // TODO: move deck to the game itself, it's part of business logic
             List<Player> players = game.getPlayers();
             Deck deck = new Deck(players.size());

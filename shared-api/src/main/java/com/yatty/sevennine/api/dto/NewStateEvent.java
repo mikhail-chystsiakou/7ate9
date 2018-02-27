@@ -9,7 +9,6 @@ import com.yatty.sevennine.api.GameResult;
 public class NewStateEvent {
     public static final String TYPE = "NewStateEvent";
     private int moveNumber;
-    private Card move;
     private String moveWinner;
     private boolean lastMove;
     private Card nextCard;
@@ -21,14 +20,6 @@ public class NewStateEvent {
 
     public void setMoveNumber(int moveNumber) {
         this.moveNumber = moveNumber;
-    }
-
-    public Card getMove() {
-        return move;
-    }
-
-    public void setMove(Card move) {
-        this.move = move;
     }
 
     public String getMoveWinner() {
@@ -72,7 +63,6 @@ public class NewStateEvent {
     public String toString() {
         return "NewStateEvent{" +
                 "moveNumber=" + moveNumber +
-                ", move=" + move +
                 ", moveWinner='" + moveWinner + '\'' +
                 ", lastMove=" + lastMove +
                 ", nextCard=" + nextCard +

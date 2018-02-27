@@ -1,5 +1,7 @@
 package com.yatty.sevennine.api;
 
+import java.util.Random;
+
 /**
  * Represents card model.
  *
@@ -25,6 +27,11 @@ public class Card {
 
     public int getModifier() {
         return modifier;
+    }
+
+    public static Card getRandomCard() {
+        Random random = new Random(System.currentTimeMillis());
+        return new Card(random.nextInt(10) + 1, random.nextInt(3) + 1);
     }
 
     @Override

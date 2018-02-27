@@ -3,6 +3,7 @@ package com.yatty.sevennine.backend.testing;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.TestRequest;
+import com.yatty.sevennine.backend.handlers.ConnectHandler;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
@@ -47,9 +48,14 @@ public class ClientStub {
         Channel c = b.connect().sync().channel();
         b.clone().bind(Integer.valueOf(p.getProperty(PropertiesProvider.Environment.PORT)));
         String testData = new ObjectMapper().writeValueAsString(new ConnectRequest("Mike"));
-        TestRequest testRequest = new TestRequest();
-        testRequest.setResponseData(testData);
-        c.writeAndFlush(testRequest).addListener((e) -> {
+
+//        TestRequest testRequest = new TestRequest();
+//        testRequest.setResponseData(testData);
+
+        ConnectRequest cr = new ConnectRequest("Mike");
+
+
+        c.writeAndFlush(cr).addListener((e) -> {
             if (e.isSuccess()) {
                 System.out.println("Message sent");
             } else {
