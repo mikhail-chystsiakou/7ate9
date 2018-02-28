@@ -4,6 +4,7 @@ import com.yatty.sevennine.api.Card;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -17,22 +18,29 @@ public class Deck {
     private Random rnd;
     private int playersNumber;  // от 2 до 4 игроков
 
-    private static final int PLAYER_CARD_AMOUNT = 18;   // в полной колоде 73 карты, т.е. делим на максимальное число игроков(4) и получаем 18 карт на одного игрока
+    private static final List<Card> DECK_LIST = Collections.unmodifiableList(new ArrayList<Card>() {{
+        for (int i = 1; i < 11; i++) {
+            for (int j = 1; j < 4; j++) {
+                add(new Card(i, j));
+                add(new Card(i, j));
+            }
+            if (i < 5)
+                add(new Card(i, 1));    // GREEN cards adding
+            if (i > 4 && i < 9)
+                add(new Card(i, 2));    // BLUE cards
+            if (i < 4 || i > 8)
+                add(new Card(i, 3));    // RED cards
+        }
+    }});
 
     public Deck(int pn) {
-        playersNumber = (pn > 1 && pn < 5) ? pn : 2;    // TODO: определить дефолтное значение количества игроков
+        playersNumber = (pn > 1 && pn < 5) ? pn : 4;    // TODO: определить дефолтное значение количества игроков
         rnd = new Random(System.currentTimeMillis());
-        cardList = new ArrayList<>();
+        cardList = new ArrayList<>(DECK_LIST);
     }
 
     private Deck(ArrayList<Card> list) {
         cardList = (list != null) ? new ArrayList<>(list) : null;
-    }
-
-    public void generate() {
-        for (int i = 0; i < playersNumber * PLAYER_CARD_AMOUNT + 1; i++) {
-            cardList.add(new Card(rnd.nextInt(10) + 1, rnd.nextInt(3) + 1));
-        }
     }
 
     public void shuffle() {
@@ -43,7 +51,7 @@ public class Deck {
     public ArrayList<Card> pullCards() {
         if (!cardList.isEmpty()) {
             ArrayList<Card> playerList = new ArrayList<>();
-            for (int i = 0; i < PLAYER_CARD_AMOUNT; i++) {
+            for (int i = 0; i < DECK_LIST.size() / playersNumber; i++) {
                 playerList.add(cardList.remove(0));
             }
             return playerList;

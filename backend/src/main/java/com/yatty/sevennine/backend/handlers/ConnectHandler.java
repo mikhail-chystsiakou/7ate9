@@ -63,7 +63,6 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
             // TODO: move deck to the game itself, it's part of business logic
             List<Player> players = game.getPlayers();
             Deck deck = new Deck(players.size());
-            deck.generate();
             deck.shuffle();
             Card startCard = deck.getStartCard();
             game.setTopCard(startCard);
