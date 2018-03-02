@@ -56,10 +56,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             return exception;
         });
 
-        if (moveAuthor == null) {
-            logger.warn("Address {} is not authenticated, ignoring message {}", clientAddress, msg);
-            processUnregisteredMove(ctx.channel(), clientAddress, msg);
-        } else if (game.acceptMove(msg.getMove())) {
+        if (game.acceptMove(msg.getMove())) {
             processRightMove(ctx.channel(), clientAddress, game, moveAuthor, msg.getMove());
         } else {
             processWrongMove(ctx.channel(), clientAddress, msg);
@@ -73,7 +70,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         CardRotator.refresh();
 
         roundWinner.incScore();
-        if (roundWinner.getScore() > Game.INITIAL_PLAYER_CARD_NUM - 2) {
+        if (roundWinner.getScore() > game.getPlayerCardsNum() - 2) {
             newStateEvent.setLastMove(true);
             Player winner = game.getWinner();
             GameResult gameResult = new GameResult();

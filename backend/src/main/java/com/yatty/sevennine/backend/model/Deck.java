@@ -33,6 +33,10 @@ public class Deck {
         }
     }});
 
+    public static int getDeckSize() {
+        return DECK_LIST.size();
+    }
+
     public Deck(int pn) {
         playersNumber = (pn > 1 && pn < 5) ? pn : 4;    // TODO: определить дефолтное значение количества игроков
         rnd = new Random(System.currentTimeMillis());

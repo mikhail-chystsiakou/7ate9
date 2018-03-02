@@ -1,6 +1,5 @@
 package com.yatty.sevennine.backend;
 
-import com.yatty.sevennine.api.dto.TestRequest;
 import com.yatty.sevennine.backend.handlers.*;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;

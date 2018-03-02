@@ -24,6 +24,7 @@ public class Game {
     private Card topCard;
     private int moveNumber;
     private int playersNum;
+    private int playerCardsNum;
 
     public Game(int playersNum) {
         this.playersNum = playersNum;
@@ -64,6 +65,14 @@ public class Game {
 
     public String getId() {
         return id;
+    }
+
+    public int getPlayerCardsNum() {
+        return playerCardsNum;
+    }
+
+    public void setPlayerCardsNum(int playerCardsNum) {
+        this.playerCardsNum = playerCardsNum;
     }
 
     public boolean acceptMove(Card move) {
