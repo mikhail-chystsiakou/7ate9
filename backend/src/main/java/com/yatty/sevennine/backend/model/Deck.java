@@ -43,24 +43,24 @@ public class Deck {
         cardList = new ArrayList<>(DECK_LIST);
     }
 
-    private Deck(ArrayList<Card> list) {
+    private Deck(List<Card> list) {
         cardList = (list != null) ? new ArrayList<>(list) : null;
     }
 
     public void shuffle() {
-        if (cardList!=null && !cardList.isEmpty())
+        if (!cardList.isEmpty())
             Collections.shuffle(cardList, rnd);
     }
 
-    public ArrayList<Card> pullCards() {
+    public List<Card> pullCards() {
         if (!cardList.isEmpty()) {
-            ArrayList<Card> playerList = new ArrayList<>();
+            List<Card> playerList = new ArrayList<>();
             for (int i = 0; i < DECK_LIST.size() / playersNumber; i++) {
                 playerList.add(cardList.remove(0));
             }
             return playerList;
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 

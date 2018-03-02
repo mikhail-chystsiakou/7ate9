@@ -55,7 +55,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         // game started
         if (game.isFull()) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 logger.warn("Unexpected exception during delay", e);
             }
@@ -70,7 +70,8 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 GameStartedEvent gameStartedEvent = new GameStartedEvent();
                 gameStartedEvent.setFirstCard(startCard);
                 List<Card> playerCards = deck.pullCards();
-                gameStartedEvent.setPlayerCards(deck.pullCards());
+                gameStartedEvent.setPlayerCards(playerCards);
+                logger.debug("PlayerCards for {}: {}", player.getGame(), playerCards.size());
                 game.setPlayerCardsNum(playerCards.size());
                 PlayerMessageSender.sendMessage(ctx.channel(), p, gameStartedEvent);
             }
