@@ -19,7 +19,7 @@ import java.util.List;
  * @version 28.02.18
  */
 public class CardRotator {
-    private static final long SLEEP_TIME = 10000;
+    private static final long SLEEP_TIME = 6000;
     private static volatile long lastRefreshed;
     private static volatile boolean working = false;
     private static final Object locker = new Object();

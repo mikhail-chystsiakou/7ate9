@@ -83,8 +83,7 @@ public class Game {
         int lesserVariant = topCard.getValue() - topCard.getModifier();
         if (lesserVariant <= 0) lesserVariant += 10;
 
-        boolean validMove = move.getValue() == greaterVariant
-                || move.getValue() == lesserVariant;
+        boolean validMove = (move.getValue() == greaterVariant ) || (move.getValue() == lesserVariant);
 
         if (validMove) {
             topCard = move;
