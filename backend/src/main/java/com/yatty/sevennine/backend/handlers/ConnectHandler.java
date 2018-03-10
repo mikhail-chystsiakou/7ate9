@@ -54,11 +54,11 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         logger.debug("Game {} is full: {}", game.getId(), game.isFull());
         // game started
         if (game.isFull()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                logger.warn("Unexpected exception during delay", e);
-            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                logger.warn("Unexpected exception during delay", e);
+//            }
             CardRotator.start(ctx.channel(), game.getPlayers());
             // TODO: move deck to the game itself, it's part of business logic
             List<Player> players = game.getPlayers();

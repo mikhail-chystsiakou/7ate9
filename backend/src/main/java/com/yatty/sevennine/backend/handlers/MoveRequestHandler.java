@@ -70,7 +70,8 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         CardRotator.refresh();
 
         roundWinner.incScore();
-        if (roundWinner.getScore() >= game.getPlayerCardsNum() - 2) {
+//        if (roundWinner.getScore() >= game.getPlayerCardsNum() - 2) {
+        if (roundWinner.getScore() >= 2) {
             newStateEvent.setLastMove(true);
             Player winner = game.getWinner();
             GameResult gameResult = new GameResult();
