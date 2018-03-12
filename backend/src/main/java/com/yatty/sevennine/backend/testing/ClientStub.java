@@ -12,7 +12,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -33,11 +35,11 @@ public class ClientStub {
 
         Bootstrap b = new Bootstrap();
         b.group(elg)
-                .channel(NioDatagramChannel.class)
+                .channel(NioSocketChannel.class)
                 .remoteAddress(sa)
-                .handler(new ChannelInitializer<DatagramChannel>() {
+                .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(DatagramChannel ch) throws Exception {
+                    public void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new JsonMessageDecoder());
                         ch.pipeline().addLast(new EchoHandler());
                         ch.pipeline().addLast(new JsonMessageEncoder());
@@ -46,7 +48,6 @@ public class ClientStub {
 
         System.out.println("Client started");
         Channel c = b.connect().sync().channel();
-        b.clone().bind(Integer.valueOf(p.getProperty(PropertiesProvider.Environment.PORT)));
         String testData = new ObjectMapper().writeValueAsString(new ConnectRequest("Mike"));
 
 //        TestRequest testRequest = new TestRequest();

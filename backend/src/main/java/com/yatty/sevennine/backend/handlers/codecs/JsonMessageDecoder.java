@@ -2,25 +2,22 @@ package com.yatty.sevennine.backend.handlers.codecs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yatty.sevennine.api.dto.ConnectRequest;
-import com.yatty.sevennine.api.dto.DisconnectRequest;
-import com.yatty.sevennine.api.dto.MoveRequest;
-import com.yatty.sevennine.api.dto.TestRequest;
+import com.yatty.sevennine.api.dto.*;
+import com.yatty.sevennine.api.dto.auth.LogInRequest;
+import com.yatty.sevennine.api.dto.auth.LogInResponse;
+import com.yatty.sevennine.backend.exceptions.io.DecodingException;
 import com.yatty.sevennine.backend.testing.TestMessage;
-import io.netty.channel.Channel;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.socket.DatagramPacket;
-import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketAddress;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.yatty.sevennine.backend.util.Constants.PEER_ADDRESS_KEY;
 
 /**
  * Used to decode inbound server messages aka requests.
@@ -29,37 +26,39 @@ import static com.yatty.sevennine.backend.util.Constants.PEER_ADDRESS_KEY;
  * @author Mike
  * @version 17.02.17
  */
-public class JsonMessageDecoder extends MessageToMessageDecoder<DatagramPacket> {
+public class JsonMessageDecoder extends ByteToMessageDecoder {
     private static final Logger logger = LoggerFactory.getLogger(JsonMessageDecoder.class);
-    private static final Map<String, Class<?>> classTypeMapping;
     private ObjectMapper objectMapper = new ObjectMapper();
-
-    static {
-        classTypeMapping = new HashMap<>();
-        classTypeMapping.put(TestMessage.TYPE, TestMessage.class);
-        classTypeMapping.put(ConnectRequest.TYPE, ConnectRequest.class);
-        classTypeMapping.put(MoveRequest.TYPE, MoveRequest.class);
-        classTypeMapping.put(DisconnectRequest.TYPE, DisconnectRequest.class);
-        classTypeMapping.put(TestRequest.TYPE, TestRequest.class);
+    
+    public JsonMessageDecoder() {
+        objectMapper = new ObjectMapper();
+        objectMapper.addMixIn(Object.class, DTOTypeMappingMixin.class);
     }
-
-
+    
     @Override
-    protected void decode(ChannelHandlerContext ctx, DatagramPacket msg, List<Object> out) throws Exception {
-        logger.trace("Decoding...");
+    protected void decode(ChannelHandlerContext ctx,
+                          ByteBuf msg, List<Object> out) throws Exception {
+        String data = msg.readBytes(msg.readableBytes()).toString(StandardCharsets.UTF_8);
+        logger.debug("Decoding '{}'", data);
         try {
-            String data = msg.content().toString(StandardCharsets.UTF_8);
-            JsonNode node = new ObjectMapper().readTree(data);
-            String type = node.get("_type").asText();
-            Class<?> clazz = classTypeMapping.get(type);
-            Object v = objectMapper.readValue(data, clazz);
+            Object v = decode(data, objectMapper);
             logger.debug("Decoded: {}", v);
             out.add(v);
         } catch (Exception e) {
-            logger.warn("Exception during decoding", e);
-            throw e;
+            throw new DecodingException("Failed to decode '" + data + "'", e);
         }
-
-        ctx.channel().attr(PEER_ADDRESS_KEY).set(msg.sender());
+    }
+    
+    private static Object decode(String data, ObjectMapper objectMapper) throws IOException {
+        JsonNode node = new ObjectMapper().readTree(data);
+        String type = node.get(DTOClassMessageTypeMapper.MAPPING_FIELD).asText();
+        System.out.printf(type);
+        Class<?> clazz = DTOClassMessageTypeMapper.getDTOClassByMessageType(type);
+        objectMapper.readValue(data, clazz);
+        return objectMapper.readValue(data, clazz);
+    }
+    
+    public static Object decode(String data) throws IOException {
+        return decode(data, new ObjectMapper());
     }
 }

@@ -4,11 +4,13 @@ import com.yatty.sevennine.api.dto.DisconnectRequest;
 import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.util.CardRotator;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ChannelHandler.Sharable
 public class DisconnectHandler extends SimpleChannelInboundHandler<DisconnectRequest> {
     private static final Logger logger = LoggerFactory.getLogger(DisconnectHandler.class);
 

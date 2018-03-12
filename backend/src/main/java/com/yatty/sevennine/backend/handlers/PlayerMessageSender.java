@@ -7,11 +7,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Collection;
 
 public class PlayerMessageSender {
     private static final Logger logger = LoggerFactory.getLogger(PlayerMessageSender.class);
-
+    
+    /**
+     * Sends <code>message</code> by the <code>channel</code>.
+     *
+     * @param channel   channel to send messages.
+     * @param message   message to send
+     * @throws MessageSendingException  if any technical error occurs
+     */
+    public static void sendMessage(Channel channel, Object message) {
+        try {
+            logger.debug("Sending message {} to {}", message, channel.remoteAddress());
+            channel.writeAndFlush(message).sync();
+        } catch (InterruptedException e) {
+            throw new MessageSendingException("Interrupted during sending message to "
+                    + channel.remoteAddress(), e);
+        } catch (Exception e) {
+            logger.warn("Exception during sending message: ", e);
+        }
+    }
+    
     /**
      * Sends <code>message</code> to the <code>playerAddress</code> by the
      * <code>channel</code>.
@@ -21,7 +41,7 @@ public class PlayerMessageSender {
      * @param message           message to send
      * @throws MessageSendingException  if any technical error occurs
      */
-    public static void sendMessage(Channel channel, InetSocketAddress playerAddress, Object message) {
+    public static void sendMessage(Channel channel, SocketAddress playerAddress, Object message) {
         try {
             logger.debug("Sending message. active: {}, open: {}, remote address {} , playerAddress: {}",
                     channel.isActive(), channel.isOpen(), channel.remoteAddress(), playerAddress);

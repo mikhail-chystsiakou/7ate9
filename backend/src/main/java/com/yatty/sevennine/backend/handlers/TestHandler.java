@@ -1,11 +1,13 @@
 package com.yatty.sevennine.backend.handlers;
 
 import com.yatty.sevennine.api.dto.TestRequest;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ChannelHandler.Sharable
 public class TestHandler extends SimpleChannelInboundHandler<TestRequest> {
     private static final Logger logger = LoggerFactory.getLogger(TestHandler.class);
 

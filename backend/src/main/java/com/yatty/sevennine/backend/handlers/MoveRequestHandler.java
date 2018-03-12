@@ -13,6 +13,7 @@ import com.yatty.sevennine.backend.model.Player;
 import com.yatty.sevennine.backend.util.CardRotator;
 import com.yatty.sevennine.backend.util.Constants;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import java.net.InetSocketAddress;
  * @author Mike
  * @version 17/02/18
  */
+@ChannelHandler.Sharable
 public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest> {
     private static final Logger logger = LoggerFactory.getLogger(MoveRequestHandler.class);
 

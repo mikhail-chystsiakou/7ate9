@@ -10,6 +10,7 @@ import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.Player;
 import com.yatty.sevennine.backend.util.CardRotator;
 import com.yatty.sevennine.backend.util.Constants;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -18,13 +19,14 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+@ChannelHandler.Sharable
 public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> {
     private static final Logger logger = LoggerFactory.getLogger(ConnectHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ConnectRequest msg) throws Exception {
-        logger.trace("Connecting..");
-        InetSocketAddress peerAddress = ctx.channel().attr(Constants.PEER_ADDRESS_KEY).get();
+        logger.debug("Connecting...");
+        System.out.println("Connecting...");
 
         Game game = GameRegistry.getFirstGame();
         if (game == null) {
@@ -35,12 +37,11 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         if (game.isFull()) {
             ConnectResponse response = new ConnectResponse();
             response.setSucceed(false);
-            PlayerMessageSender.sendMessage(ctx.channel(), peerAddress, response);
+            PlayerMessageSender.sendMessage(ctx.channel(), response);
             return;
         }
 
         Player player = new Player(msg.getName());
-        player.setRemoteAddress(peerAddress);
         player.setGame(game);
         game.addPlayer(player);
 
@@ -49,7 +50,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
         ConnectResponse response = new ConnectResponse();
         response.setGameId(game.getId());
         response.setSucceed(true);
-        PlayerMessageSender.sendMessage(ctx.channel(), peerAddress, response);
+        PlayerMessageSender.sendMessage(ctx.channel(), response);
 
         logger.debug("Game {} is full: {}", game.getId(), game.isFull());
         // game started
@@ -73,7 +74,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<ConnectRequest> 
                 gameStartedEvent.setPlayerCards(playerCards);
                 logger.debug("PlayerCards for {}: {}", player.getGame(), playerCards.size());
                 game.setPlayerCardsNum(playerCards.size());
-                PlayerMessageSender.sendMessage(ctx.channel(), p, gameStartedEvent);
+                PlayerMessageSender.sendMessage(p.getSocketChannel(), gameStartedEvent);
             }
         }
     }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.*?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.yatty.sevennine.backend.TCPClientStub"
+      maxWidth="500" maxHeight="500" alignment="TOP_CENTER">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+
+    <TextArea fx:id="inputArea" promptText="json message..." VBox.vgrow="ALWAYS"/>
+
+
+    <Button fx:id="sendButton" text="Send" prefWidth="150" onAction="#sendMessageAction"/>
+
+    <TextArea fx:id="outputArea" promptText="received data" editable="false" VBox.vgrow="ALWAYS"/>
+
+    <Separator/>
+
+    <FlowPane vgap="10.0" hgap="10">
+        <padding>
+            <Insets left="5.0" right="5.0"/>
+        </padding>
+        <Button text="LogIn" onAction="#setLoginTemplate"/>
+        <Button text="Connect" onAction="#setConnectTemplate"/>
+        <Button text="Disconnect" onAction="#setDisconnectTemplate"/>
+    </FlowPane>
+</VBox>
