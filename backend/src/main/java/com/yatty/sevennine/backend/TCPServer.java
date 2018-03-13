@@ -2,8 +2,11 @@ package com.yatty.sevennine.backend;
 
 import com.yatty.sevennine.backend.handlers.*;
 import com.yatty.sevennine.backend.handlers.auth.LogInHandler;
+import com.yatty.sevennine.backend.handlers.auth.LogOutHandler;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
+import com.yatty.sevennine.backend.handlers.lobby.LobbySubscribeHandler;
+import com.yatty.sevennine.backend.handlers.lobby.LobbyUnsubscribeHandler;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -59,16 +62,28 @@ public class TCPServer {
         private ChannelHandler encoder = new JsonMessageEncoder();
         private ChannelHandler finalCleanupHandler = new FinalCleanupHandler();
         private ChannelHandler logInHandler = new LogInHandler();
+        private ChannelHandler logOutHandler = new LogOutHandler();
+        private ChannelHandler lobbySubscribeHandler = new LobbySubscribeHandler();
+        private ChannelHandler lobbyUnsubscribeHandler = new LobbyUnsubscribeHandler();
     
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
             logger.debug("Initializing socket channel...");
             ch.pipeline().addFirst("decodeHandler", new JsonMessageDecoder());
+            
             ch.pipeline().addLast("loginHandler", logInHandler);
+            ch.pipeline().addLast("logoutHandler", logOutHandler);
+    
+    
+            ch.pipeline().addLast("loginHandler", lobbySubscribeHandler);
+            ch.pipeline().addLast("logoutHandler", lobbyUnsubscribeHandler);
+    
+    
             ch.pipeline().addLast("connectHandler", connectHandler);
             ch.pipeline().addLast("testHandler", testHandler);
             ch.pipeline().addLast("moveRequestHandler", moveRequestHandler);
             ch.pipeline().addLast("disconnectHandler", disconnectHandler);
+            
             ch.pipeline().addLast("encodeHandler", encoder);
             ch.pipeline().addLast("cleanupHandler", finalCleanupHandler);
         }

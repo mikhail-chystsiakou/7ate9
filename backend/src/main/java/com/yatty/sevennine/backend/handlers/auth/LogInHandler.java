@@ -19,13 +19,11 @@ public class LogInHandler extends SimpleChannelInboundHandler<LogInRequest> {
     protected void channelRead0(ChannelHandlerContext ctx, LogInRequest msg) throws Exception {
         logger.debug("Player {} is logging in", msg.getName());
         LogInResponse response = new LogInResponse();
-        if (!PlayerRegistry.checkPlayerRegistered(msg.getName())) {
-            PlayerRegistry.registerPlayer(msg.getName(), ctx.channel().remoteAddress());
-            response.setSucceed(true);
-        } else {
-            response.setSucceed(false);
-            response.setDescription("Can not log in because player is online already");
-        }
+        String authToken = PlayerRegistry.registerPlayer(
+                msg.getName(), ctx.channel().remoteAddress()
+        );
+        response.setSucceed(true);
+        response.setAuthToken(authToken);
         PlayerMessageSender.sendMessage(ctx.channel(), response);
     }
 }

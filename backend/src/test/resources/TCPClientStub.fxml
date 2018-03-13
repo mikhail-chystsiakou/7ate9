@@ -28,6 +28,7 @@
             <Insets left="5.0" right="5.0"/>
         </padding>
         <Button text="LogIn" onAction="#setLoginTemplate"/>
+        <Button text="LogOut" onAction="#setLogoutTemplate"/>
         <Button text="Connect" onAction="#setConnectTemplate"/>
         <Button text="Disconnect" onAction="#setDisconnectTemplate"/>
     </FlowPane>

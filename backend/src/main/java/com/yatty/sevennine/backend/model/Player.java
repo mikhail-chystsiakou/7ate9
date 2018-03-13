@@ -6,7 +6,7 @@ import java.net.SocketAddress;
 
 
 /**
- * Represents user in game.
+ * Represents logined user.
  *
  * @author Mike
  * @version 17/02/18
@@ -17,6 +17,8 @@ public class Player {
     private Game game;
     private SocketAddress remoteAddress;    // used to send notifications
     private Channel socketChannel;              // used during game
+    private String authToken;
+    private boolean subscriber;
 
     public Player(String name) {
         this.name = name;
@@ -56,6 +58,22 @@ public class Player {
     
     public void setSocketChannel(Channel socketChannel) {
         this.socketChannel = socketChannel;
+    }
+    
+    public boolean isSubscriber() {
+        return subscriber;
+    }
+    
+    public void setSubscriber(boolean subscriber) {
+        this.subscriber = subscriber;
+    }
+    
+    public String getAuthToken() {
+        return authToken;
+    }
+    
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
     
     @Override

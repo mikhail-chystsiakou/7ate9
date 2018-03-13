@@ -52,7 +52,6 @@ public class JsonMessageDecoder extends ByteToMessageDecoder {
     private static Object decode(String data, ObjectMapper objectMapper) throws IOException {
         JsonNode node = new ObjectMapper().readTree(data);
         String type = node.get(DTOClassMessageTypeMapper.MAPPING_FIELD).asText();
-        System.out.printf(type);
         Class<?> clazz = DTOClassMessageTypeMapper.getDTOClassByMessageType(type);
         objectMapper.readValue(data, clazz);
         return objectMapper.readValue(data, clazz);

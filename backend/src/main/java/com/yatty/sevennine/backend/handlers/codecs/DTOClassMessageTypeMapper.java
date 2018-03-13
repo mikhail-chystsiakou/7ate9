@@ -1,9 +1,11 @@
 package com.yatty.sevennine.backend.handlers.codecs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.*;
 import com.yatty.sevennine.api.dto.auth.LogInRequest;
 import com.yatty.sevennine.api.dto.auth.LogInResponse;
+import com.yatty.sevennine.api.dto.auth.LogOutRequest;
+import com.yatty.sevennine.api.dto.lobby.LobbySubscribeRequest;
+import com.yatty.sevennine.api.dto.lobby.LobbyUnsubscribeRequest;
 import com.yatty.sevennine.backend.testing.TestMessage;
 
 import java.util.HashMap;
@@ -17,6 +19,9 @@ public class DTOClassMessageTypeMapper {
         classTypeMapping.put(getMessageTypeByDTOClass(TestMessage.class), TestMessage.class);
         classTypeMapping.put(getMessageTypeByDTOClass(LogInRequest.class), LogInRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(LogInResponse.class), LogInResponse.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(LogOutRequest.class), LogOutRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(LobbySubscribeRequest.class), LobbySubscribeRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(LobbyUnsubscribeRequest.class), LobbyUnsubscribeRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(ConnectRequest.class), ConnectRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(ConnectResponse.class), ConnectResponse.class);
         classTypeMapping.put(getMessageTypeByDTOClass(MoveRequest.class), MoveRequest.class);

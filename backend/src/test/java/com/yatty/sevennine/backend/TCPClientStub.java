@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.yatty.sevennine.api.dto.ConnectRequest;
 import com.yatty.sevennine.api.dto.DisconnectRequest;
 import com.yatty.sevennine.api.dto.auth.LogInRequest;
+import com.yatty.sevennine.api.dto.auth.LogOutRequest;
 import com.yatty.sevennine.backend.handlers.FinalCleanupHandler;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
@@ -107,6 +108,13 @@ public class TCPClientStub extends Application implements Initializable {
         LogInRequest logInRequest = new LogInRequest();
         logInRequest.setName("Mike");
         inputArea.setText(JsonMessageEncoder.encode(logInRequest));
+    }
+    
+    @FXML
+    public void setLogoutTemplate() throws Exception {
+        LogOutRequest logOutRequest = new LogOutRequest();
+        logOutRequest.setAuthToken("-");
+        inputArea.setText(JsonMessageEncoder.encode(logOutRequest));
     }
     
     @ChannelHandler.Sharable

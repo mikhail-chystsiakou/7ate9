@@ -1,9 +1,9 @@
-package com.yatty.sevennine.api.dto.auth;
+package com.yatty.sevennine.api.dto.lobby;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LogOutRequest {
+public class LobbyUnsubscribeRequest {
     private String authToken;
     
     public String getAuthToken() {
