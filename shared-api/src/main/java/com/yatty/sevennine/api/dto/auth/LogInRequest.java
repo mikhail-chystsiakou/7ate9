@@ -6,6 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class LogInRequest {
     private String name;
     
+    public LogInRequest() {
+    
+    }
+    
+    public LogInRequest(String name) {
+        this.name = name;
+    }
+    
     public String getName() {
         return name;
     }

@@ -19,7 +19,6 @@ public class TestHandler extends SimpleChannelInboundHandler<TestRequest> {
                 logger.debug("Successfully sent test message '{}' back to the client", msg.getResponseData());
             } else {
                 logger.warn("Exception during sending test response: ", e.cause());
-
             }
         });
     }

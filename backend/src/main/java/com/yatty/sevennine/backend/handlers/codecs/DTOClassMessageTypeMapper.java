@@ -4,8 +4,11 @@ import com.yatty.sevennine.api.dto.*;
 import com.yatty.sevennine.api.dto.auth.LogInRequest;
 import com.yatty.sevennine.api.dto.auth.LogInResponse;
 import com.yatty.sevennine.api.dto.auth.LogOutRequest;
-import com.yatty.sevennine.api.dto.lobby.LobbySubscribeRequest;
-import com.yatty.sevennine.api.dto.lobby.LobbyUnsubscribeRequest;
+import com.yatty.sevennine.api.dto.game.GameStartedEvent;
+import com.yatty.sevennine.api.dto.game.MoveRejectedResponse;
+import com.yatty.sevennine.api.dto.game.MoveRequest;
+import com.yatty.sevennine.api.dto.game.NewStateEvent;
+import com.yatty.sevennine.api.dto.lobby.*;
 import com.yatty.sevennine.backend.testing.TestMessage;
 
 import java.util.HashMap;
@@ -18,14 +21,13 @@ public class DTOClassMessageTypeMapper {
     static {
         classTypeMapping.put(getMessageTypeByDTOClass(TestMessage.class), TestMessage.class);
         classTypeMapping.put(getMessageTypeByDTOClass(LogInRequest.class), LogInRequest.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(LogInResponse.class), LogInResponse.class);
         classTypeMapping.put(getMessageTypeByDTOClass(LogOutRequest.class), LogOutRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(MoveRequest.class), MoveRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(CreateLobbyRequest.class), CreateLobbyRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(EnterLobbyRequest.class), EnterLobbyRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(LobbySubscribeRequest.class), LobbySubscribeRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(LobbyUnsubscribeRequest.class), LobbyUnsubscribeRequest.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(ConnectRequest.class), ConnectRequest.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(ConnectResponse.class), ConnectResponse.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(MoveRequest.class), MoveRequest.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(DisconnectRequest.class), DisconnectRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(KeepAliveRequest.class), KeepAliveRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(TestRequest.class), TestRequest.class);
     }
     

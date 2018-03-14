@@ -9,7 +9,6 @@ public class DeckTest {
             System.out.println("Generated deck: " + deck);
             System.out.println("Deck size: " + deck.getSize());
             // shuffle test
-            deck.shuffle();
             System.out.println("Shuffled deck: " + deck);
             System.out.println("Deck size: " + deck.getSize());
             // start card pulling test
@@ -17,11 +16,11 @@ public class DeckTest {
             System.out.println("Start card: " + deck.getStartCard());
             System.out.println("Deck size: " + deck.getSize());
             // player cards pulling test
-            System.out.println("First pull: " + deck.pullCards(1));
+            System.out.println("First pull: " + deck.pullCards());
             System.out.println("Deck size: " + deck.getSize());
-            System.out.println("Second pull: " + deck.pullCards(1));
+            System.out.println("Second pull: " + deck.pullCards());
             System.out.println("Deck size: " + deck.getSize());
-            System.out.println("Third pull: " + deck.pullCards(1));
+            System.out.println("Third pull: " + deck.pullCards());
             System.out.println("Deck size: " + deck.getSize());
         }
     }

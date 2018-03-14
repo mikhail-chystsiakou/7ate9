@@ -1,46 +1,45 @@
 package com.yatty.sevennine.backend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yatty.sevennine.api.dto.ConnectRequest;
-import com.yatty.sevennine.api.dto.DisconnectRequest;
-import com.yatty.sevennine.api.dto.MoveRequest;
-import com.yatty.sevennine.api.dto.TestRequest;
-import com.yatty.sevennine.backend.handlers.*;
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
-import com.yatty.sevennine.backend.testing.TestMessage;
+import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.net.SocketAddress;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
 public class TCPServerStub {
+    static SocketAddress address;
+    
     public static void main(String[] args) throws Exception {
+        EventLoopGroup boss = new NioEventLoopGroup(1);
         EventLoopGroup group = new NioEventLoopGroup(5);
+    
+        Properties environmentProperties = PropertiesProvider.getEnvironmentProperties();
+        InetSocketAddress connectionPort = new InetSocketAddress(
+                Integer.valueOf(environmentProperties.getProperty(PropertiesProvider.Environment.PORT))
+        );
 
         try{
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(group);
+            serverBootstrap.group(boss, group);
             serverBootstrap.channel(NioServerSocketChannel.class);
-            serverBootstrap.localAddress(new InetSocketAddress("localhost", 39405));
+            serverBootstrap.localAddress(connectionPort);
 
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    socketChannel.pipeline().addLast(new ReadTimeoutHandler(30));
                     socketChannel.pipeline().addLast(new HelloServerHandler());
                 }
             });
@@ -87,7 +86,30 @@ public class TCPServerStub {
             String received = inBuffer.toString(CharsetUtil.UTF_8);
             ctx.writeAndFlush(Unpooled.copiedBuffer(received, CharsetUtil.UTF_8)).sync();
             System.out.println("Server data: '" + received + "', thread: " + Thread.currentThread().getId());
-            
+            address = ctx.channel().remoteAddress();
+            ctx.channel().disconnect();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(4000);
+                    
+                    
+                    ctx.channel().connect(address);
+                    ctx.channel().writeAndFlush(received).addListener(e -> {
+                        if (e.isSuccess()) {
+                        
+                        } else {
+                            e.cause().printStackTrace();
+                        }
+                    }).sync();
+                    System.out.println("Sent twice");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+//            for (int i = 0; i < 5; i++) {
+//                Thread.sleep(1000);
+//                ctx.channel().config().al
+//            }
         }
         
         @Override

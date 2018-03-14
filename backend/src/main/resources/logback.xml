@@ -14,6 +14,15 @@
         </encoder>
     </appender>
 
+    <appender name="ErrorsAppender" class="ch.qos.logback.core.FileAppender">
+        <file>7ate9-errors.log</file>
+        <append>false</append>
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <pattern>%d - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="ERROR">
         <appender-ref ref="STDOUT" />
     </root>
@@ -24,5 +33,9 @@
 
     <logger name="com.yatty.sevennine.backend.handlers.codecs" level="debug" additivity="false">
         <appender-ref ref="MessagesAppender" />
+    </logger>
+
+    <logger name="com.yatty.sevennine.backend.handlers.ExceptionHandler" level="error" additivity="false">
+        <appender-ref ref="ErrorsAppender" />
     </logger>
 </configuration>

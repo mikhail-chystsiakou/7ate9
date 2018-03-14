@@ -1,16 +1,13 @@
 package com.yatty.sevennine.backend.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yatty.sevennine.api.dto.ConnectRequest;
-import com.yatty.sevennine.api.dto.TestRequest;
-import com.yatty.sevennine.backend.handlers.ConnectHandler;
+import com.yatty.sevennine.api.dto.auth.LogInRequest;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.util.PropertiesProvider;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -48,12 +45,12 @@ public class ClientStub {
 
         System.out.println("Client started");
         Channel c = b.connect().sync().channel();
-        String testData = new ObjectMapper().writeValueAsString(new ConnectRequest("Mike"));
+        String testData = new ObjectMapper().writeValueAsString(new LogInRequest("Mike"));
 
 //        TestRequest testRequest = new TestRequest();
 //        testRequest.setResponseData(testData);
 
-        ConnectRequest cr = new ConnectRequest("Mike");
+        LogInRequest cr = new LogInRequest("Mike");
 
 
         c.writeAndFlush(cr).addListener((e) -> {

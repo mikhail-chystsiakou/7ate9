@@ -1,11 +1,10 @@
-package com.yatty.sevennine.api.dto.auth;
+package com.yatty.sevennine.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LogInResponse {
+public class KeepAliveRequest {
     private String authToken;
-    private String description;
     
     public String getAuthToken() {
         return authToken;
@@ -13,13 +12,5 @@ public class LogInResponse {
     
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
