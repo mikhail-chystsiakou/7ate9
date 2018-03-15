@@ -1,5 +1,8 @@
 package com.yatty.sevennine.api.dto.lobby;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateLobbyRequest {
     private PublicLobbyInfo publicLobbyInfo;
     private String lobbyName;
