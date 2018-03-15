@@ -2,14 +2,24 @@ package com.yatty.sevennine.api.dto.lobby;
 
 public class CreateLobbyRequest {
     private PublicLobbyInfo publicLobbyInfo;
+    private String lobbyName;
+    private int maxPlayersNumber;
     private String authToken;
     
-    public PublicLobbyInfo getPublicLobbyInfo() {
-        return publicLobbyInfo;
+    public String getLobbyName() {
+        return lobbyName;
     }
     
-    public void setPublicLobbyInfo(PublicLobbyInfo publicLobbyInfo) {
-        this.publicLobbyInfo = publicLobbyInfo;
+    public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName;
+    }
+    
+    public int getMaxPlayersNumber() {
+        return maxPlayersNumber;
+    }
+    
+    public void setMaxPlayersNumber(int maxPlayersNumber) {
+        this.maxPlayersNumber = maxPlayersNumber;
     }
     
     public String getAuthToken() {
