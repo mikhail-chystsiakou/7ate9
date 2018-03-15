@@ -23,8 +23,7 @@ public class JsonMessageEncoder extends MessageToMessageEncoder<Object> {
     private ObjectMapper objectMapper = new ObjectMapper();
     
     public JsonMessageEncoder() {
-        objectMapper = new ObjectMapper();
-        objectMapper.addMixIn(Object.class, DTOTypeMappingMixin.class);
+        objectMapper = DTOClassMessageTypeMapper.prepareObjectMapper();
     }
 
     @Override
@@ -50,8 +49,7 @@ public class JsonMessageEncoder extends MessageToMessageEncoder<Object> {
     }
     
     public static String encode(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.addMixIn(Object.class, DTOTypeMappingMixin.class);
+        ObjectMapper objectMapper = DTOClassMessageTypeMapper.prepareObjectMapper();
         ObjectWriter objectWriter = objectMapper
                 .writerWithDefaultPrettyPrinter()
                 .withAttribute(
