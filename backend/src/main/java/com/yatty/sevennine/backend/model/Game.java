@@ -90,6 +90,7 @@ public class Game {
         if (validMove) {
             for (Player p : players) {
                 if (p.getLoginedUser().equals(moveAuthor)) {
+                    logger.debug("NOW PLAYER HAS {} CARDS", p.getCards().size());
                     setTopCard(move);
                     moveNumber++;
                     p.cards.remove(move);
