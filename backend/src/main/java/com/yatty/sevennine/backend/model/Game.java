@@ -72,7 +72,7 @@ public class Game {
      * Initializes player cards and top card
      */
     public void giveOutCards() {
-        Deck deck = new Deck(expectedPlayersNum);
+        Deck deck = new Deck(expectedPlayersNum, true);
         topCard = deck.getStartCard();
         players.forEach(p -> p.setCards(deck.pullCards()));
     }

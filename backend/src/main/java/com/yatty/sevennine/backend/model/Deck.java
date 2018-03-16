@@ -35,14 +35,14 @@ public class Deck {
         }
     }});
 
-    public Deck(int pn) {
+    public Deck(int pn, boolean test) {
         deck = new ArrayList<>(DECK_MODEL);
         Collections.shuffle(deck);
         
         startCard = deck.get(0);
         deck.remove(0);
         
-        cardsPerPlayer = (DECK_SIZE - 1) / pn;
+        cardsPerPlayer = (test) ? 3 : (DECK_SIZE - 1) / pn;
     }
 
     public List<Card> pullCards() {
