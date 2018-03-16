@@ -32,7 +32,6 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         
         EnterLobbyResponse response = new EnterLobbyResponse();
         response.setPrivateLobbyInfo(lobby.getPrivateLobbyInfo());
-        response.setLobbyId(msg.getLobbyId());
         
         ctx.channel().writeAndFlush(response).sync();
         
@@ -46,6 +45,7 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
                 GameStartedEvent gameStartedEvent = new GameStartedEvent();
                 gameStartedEvent.setFirstCard(lobby.getTopCard());
                 gameStartedEvent.setPlayerCards(p.getCards());
+                gameStartedEvent.setLobbyId(msg.getLobbyId());
                 
                 p.getLoginedUser().getChannel().writeAndFlush(gameStartedEvent);
             });

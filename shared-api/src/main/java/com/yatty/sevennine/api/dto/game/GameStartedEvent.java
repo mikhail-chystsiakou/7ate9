@@ -10,7 +10,16 @@ import java.util.List;
 public class GameStartedEvent {
     private Card firstCard;
     private List<Card> playerCards;
-
+    private String lobbyId;
+    
+    public String getLobbyId() {
+        return lobbyId;
+    }
+    
+    public void setLobbyId(String lobbyId) {
+        this.lobbyId = lobbyId;
+    }
+    
     public List<Card> getPlayerCards() {
         return playerCards;
     }
