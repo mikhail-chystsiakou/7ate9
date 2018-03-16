@@ -21,13 +21,16 @@ public class CreateLobbyHandler extends SimpleChannelInboundHandler<CreateLobbyR
     
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CreateLobbyRequest msg) throws Exception {
-        logger.debug("Creating lobby '{}'", msg.getLobbyName());
+        LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
+        logger.debug("User '{}' is creating lobby '{}'", user.getName(), msg.getLobbyName());
         
         Game newLobby = new Game(
                 msg.getLobbyName(),
                 msg.getMaxPlayersNumber()
         );
+        newLobby.addPlayer(user);
         GameRegistry.registerLobby(newLobby);
+        
         
         CreateLobbyResponse response = new CreateLobbyResponse();
         response.setLobbyId(newLobby.getId());
