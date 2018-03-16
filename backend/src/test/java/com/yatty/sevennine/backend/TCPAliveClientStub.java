@@ -40,10 +40,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TCPAliveClientStub extends Application implements Initializable {
     public static final Logger logger = LoggerFactory.getLogger(TCPAliveClientStub.class);
     private static volatile Channel aliveChannel;
+    private static volatile String token;
+    private static volatile String lastLobbyId;
     
     private static SocketAddress destinationAddress =
             new InetSocketAddress("127.0.0.1", 39405);
@@ -105,7 +109,7 @@ public class TCPAliveClientStub extends Application implements Initializable {
     
     @FXML
     public void setLoginTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new LogInRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new LogInRequest("Mike")));
     }
     
     @FXML
@@ -115,27 +119,27 @@ public class TCPAliveClientStub extends Application implements Initializable {
     
     @FXML
     public void setMoveRequestTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new MoveRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new MoveRequest(token)));
     }
     
     @FXML
     public void setCreateLobbyTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new CreateLobbyRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new CreateLobbyRequest(2, token)));
     }
     
     @FXML
     public void setSubscribeTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new LobbySubscribeRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new LobbySubscribeRequest(token)));
     }
     
     @FXML
     public void setUnsubscribeTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new LobbyUnsubscribeRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new LobbyUnsubscribeRequest(token)));
     }
     
     @FXML
     public void setJoinTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new EnterLobbyRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new EnterLobbyRequest(lastLobbyId, token)));
     }
     
     @Override
@@ -150,11 +154,22 @@ public class TCPAliveClientStub extends Application implements Initializable {
         @Override
         protected void channelRead0(ChannelHandlerContext ctx,
                                     String msg) throws Exception {
-            logger.debug("Message received");
+//            logger.debug("Message received");
             logger.debug(msg);
-            Platform.runLater(() -> {
-                logger.debug("output: {}, msg: {}", outputArea, msg);
-            });
+            Pattern p = Pattern.compile("\"authToken\":\"([^\"]*)\"");
+            Matcher m = p.matcher(msg);
+            if (m.find()) {
+                token = m.group(1);
+            }
+    
+            Pattern p2 = Pattern.compile("\"lobbyList\":\\[\\{\"lobbyId\":\"([^\"]*)\"");
+            Matcher m2 = p.matcher(msg);
+            if (m.find()) {
+                lastLobbyId = m.group(1);
+            }
+//            Platform.runLater(() -> {
+//                logger.debug("output: {}, msg: {}", outputArea, msg);
+//            });
         }
     }
     

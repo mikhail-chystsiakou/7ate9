@@ -10,7 +10,14 @@ public class MoveRequest {
     private Card move;
     private String gameId;
     private String authToken;
-
+    
+    public MoveRequest() {
+    }
+    
+    public MoveRequest(String authToken) {
+        this.authToken = authToken;
+    }
+    
     public int getMoveNumber() {
         return moveNumber;
     }

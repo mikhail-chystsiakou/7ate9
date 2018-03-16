@@ -1,28 +1,15 @@
 package com.yatty.sevennine.api.dto.lobby;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateLobbyRequest {
     private PublicLobbyInfo publicLobbyInfo;
-    private String lobbyName;
-    private int maxPlayersNumber;
     private String authToken;
     
-    public String getLobbyName() {
-        return lobbyName;
+    public PublicLobbyInfo getPublicLobbyInfo() {
+        return publicLobbyInfo;
     }
     
-    public void setLobbyName(String lobbyName) {
-        this.lobbyName = lobbyName;
-    }
-    
-    public int getMaxPlayersNumber() {
-        return maxPlayersNumber;
-    }
-    
-    public void setMaxPlayersNumber(int maxPlayersNumber) {
-        this.maxPlayersNumber = maxPlayersNumber;
+    public void setPublicLobbyInfo(PublicLobbyInfo publicLobbyInfo) {
+        this.publicLobbyInfo = publicLobbyInfo;
     }
     
     public String getAuthToken() {

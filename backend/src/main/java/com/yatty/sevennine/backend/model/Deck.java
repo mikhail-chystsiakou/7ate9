@@ -47,7 +47,7 @@ public class Deck {
 
     public List<Card> pullCards() {
         if (deck.size() >= cardsPerPlayer) {
-            List<Card> playerList = deck.subList(0, cardsPerPlayer);
+            List<Card> playerList = new ArrayList<>(deck.subList(0, cardsPerPlayer));
             deck.removeAll(playerList);
             return playerList;
         } else {
