@@ -38,7 +38,6 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         if (lobby.isFull()) {
             lobby.giveOutCards();
             
-//            CardRotator.start(lobby);
             GameRegistry.gameStarted(lobby.getId());
             
             lobby.getPlayers().forEach(p -> {
@@ -49,6 +48,8 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
                 
                 p.getLoginedUser().getChannel().writeAndFlush(gameStartedEvent);
             });
+            
+            CardRotator.start(lobby);
         }
     }
 }

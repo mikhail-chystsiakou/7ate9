@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class CardRotator {
     private static Map<String, CardRotator> rotators = new ConcurrentHashMap<>();
-    public static final long SLEEP_TIME = 6000;
+    public static final long SLEEP_TIME = 10000;
     private AtomicLong lastRefreshed = new AtomicLong();
     private final AtomicBoolean working = new AtomicBoolean(false);
     private Game game;
