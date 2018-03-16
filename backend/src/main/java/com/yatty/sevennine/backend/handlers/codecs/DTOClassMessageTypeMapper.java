@@ -31,6 +31,17 @@ public class DTOClassMessageTypeMapper {
         classTypeMapping.put(getMessageTypeByDTOClass(LobbyUnsubscribeRequest.class), LobbyUnsubscribeRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(KeepAliveRequest.class), KeepAliveRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(TestRequest.class), TestRequest.class);
+    
+        encodedClasses.add(TestMessage.class);
+        encodedClasses.add(LogInRequest.class);
+        encodedClasses.add(LogOutRequest.class);
+        encodedClasses.add(MoveRequest.class);
+        encodedClasses.add(CreateLobbyRequest.class);
+        encodedClasses.add(EnterLobbyRequest.class);
+        encodedClasses.add(LobbySubscribeRequest.class);
+        encodedClasses.add(LobbyUnsubscribeRequest.class);
+        encodedClasses.add(KeepAliveRequest.class);
+        encodedClasses.add(TestRequest.class);
         
         encodedClasses.add(LogInResponse.class);
         encodedClasses.add(GameStartedEvent.class);

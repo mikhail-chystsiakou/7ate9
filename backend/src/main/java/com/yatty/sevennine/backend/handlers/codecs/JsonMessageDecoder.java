@@ -10,6 +10,7 @@ import com.yatty.sevennine.backend.testing.TestMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ import java.util.Map;
  * @author Mike
  * @version 17.02.17
  */
-public class JsonMessageDecoder extends ByteToMessageDecoder {
+public class JsonMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
     private static final Logger logger = LoggerFactory.getLogger(JsonMessageDecoder.class);
     private ObjectMapper objectMapper = new ObjectMapper();
     

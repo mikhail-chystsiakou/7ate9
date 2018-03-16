@@ -16,6 +16,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +76,7 @@ public class TCPServer {
             try {
                 logger.debug("Initializing socket channel...");
                 
+                ch.pipeline().addFirst("jsonObjectDecoder", new JsonObjectDecoder());
                 ch.pipeline().addFirst("decodeHandler", new JsonMessageDecoder());
     
                 ch.pipeline().addLast("testHandler", testHandler);

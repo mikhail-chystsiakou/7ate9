@@ -5,7 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EnterLobbyRequest {
     private String authToken;
-    private PublicLobbyInfo publicLobbyInfo;
+    private String lobbyId;
+    
+    public EnterLobbyRequest() {
+    }
+    
+    public EnterLobbyRequest(String authToken, String lobbyId) {
+        this.authToken = authToken;
+        this.lobbyId = lobbyId;
+    }
     
     public String getAuthToken() {
         return authToken;
@@ -15,11 +23,11 @@ public class EnterLobbyRequest {
         this.authToken = authToken;
     }
     
-    public PublicLobbyInfo getPublicLobbyInfo() {
-        return publicLobbyInfo;
+    public String getLobbyId() {
+        return lobbyId;
     }
     
-    public void setPublicLobbyInfo(PublicLobbyInfo publicLobbyInfo) {
-        this.publicLobbyInfo = publicLobbyInfo;
+    public void setLobbyId(String lobbyId) {
+        this.lobbyId = lobbyId;
     }
 }

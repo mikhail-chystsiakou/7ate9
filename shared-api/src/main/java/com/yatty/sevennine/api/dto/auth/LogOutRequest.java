@@ -6,6 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class LogOutRequest {
     private String authToken;
     
+    public LogOutRequest() {
+    }
+    
+    public LogOutRequest(String authToken) {
+        this.authToken = authToken;
+    }
+    
     public String getAuthToken() {
         return authToken;
     }

@@ -114,7 +114,7 @@ public class TCPAliveClientStub extends Application implements Initializable {
     
     @FXML
     public void setLogoutTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new LogOutRequest()));
+        inputArea.setText(JsonMessageEncoder.encode(new LogOutRequest(token)));
     }
     
     @FXML
@@ -124,7 +124,7 @@ public class TCPAliveClientStub extends Application implements Initializable {
     
     @FXML
     public void setCreateLobbyTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new CreateLobbyRequest(2, token)));
+        inputArea.setText(JsonMessageEncoder.encode(new CreateLobbyRequest("Mike", 2, token)));
     }
     
     @FXML
@@ -139,7 +139,7 @@ public class TCPAliveClientStub extends Application implements Initializable {
     
     @FXML
     public void setJoinTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new EnterLobbyRequest(lastLobbyId, token)));
+        inputArea.setText(JsonMessageEncoder.encode(new EnterLobbyRequest(token, lastLobbyId)));
     }
     
     @Override
@@ -163,9 +163,9 @@ public class TCPAliveClientStub extends Application implements Initializable {
             }
     
             Pattern p2 = Pattern.compile("\"lobbyList\":\\[\\{\"lobbyId\":\"([^\"]*)\"");
-            Matcher m2 = p.matcher(msg);
-            if (m.find()) {
-                lastLobbyId = m.group(1);
+            Matcher m2 = p2.matcher(msg);
+            if (m2.find()) {
+                lastLobbyId = m2.group(1);
             }
 //            Platform.runLater(() -> {
 //                logger.debug("output: {}, msg: {}", outputArea, msg);

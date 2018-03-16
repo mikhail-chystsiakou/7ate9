@@ -6,6 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class LobbyUnsubscribeRequest {
     private String authToken;
     
+    public LobbyUnsubscribeRequest() {
+    }
+    
+    public LobbyUnsubscribeRequest(String authToken) {
+        this.authToken = authToken;
+    }
+    
     public String getAuthToken() {
         return authToken;
     }

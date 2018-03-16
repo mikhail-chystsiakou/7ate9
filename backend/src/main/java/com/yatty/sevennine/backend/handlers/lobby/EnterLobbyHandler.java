@@ -21,10 +21,10 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
     protected void channelRead0(ChannelHandlerContext ctx, EnterLobbyRequest msg) throws Exception {
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
         logger.debug("Player '{}' is entering lobby '{}'",
-                user.getName(), msg.getPublicLobbyInfo().getLobbyName()
+                user.getName(), msg.getLobbyId()
         );
     
-        Game lobby = GameRegistry.getLobbyById(msg.getPublicLobbyInfo().getLobbyId());
+        Game lobby = GameRegistry.getLobbyById(msg.getLobbyId());
         lobby.addPlayer(user);
         user.setChannel(ctx.channel());
         
@@ -38,7 +38,7 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         if (lobby.isFull()) {
             lobby.giveOutCards();
             
-            CardRotator.start(lobby);
+//            CardRotator.start(lobby);
             GameRegistry.gameStarted(lobby.getId());
             
             lobby.getPlayers().forEach(p -> {
