@@ -72,7 +72,7 @@ public class Game {
      * Initializes player cards and top card
      */
     public void giveOutCards() {
-        Deck deck = new Deck(expectedPlayersNum, true);
+        Deck deck = new Deck(expectedPlayersNum, false);
         topCard = deck.getStartCard();
         players.forEach(p -> p.setCards(deck.pullCards()));
     }
@@ -164,8 +164,8 @@ public class Game {
         PublicLobbyInfo publicLobbyInfo = new PublicLobbyInfo();
         publicLobbyInfo.setLobbyId(this.id);
         publicLobbyInfo.setLobbyName(this.name);
-        publicLobbyInfo.setMaxPlayersNum(this.expectedPlayersNum);
-        publicLobbyInfo.setCurrentPlayersNum(this.getPlayers().size());
+        publicLobbyInfo.setMaxPlayersNumber(this.expectedPlayersNum);
+        publicLobbyInfo.setCurrentPlayersNumber(this.getPlayers().size());
         return publicLobbyInfo;
     }
     

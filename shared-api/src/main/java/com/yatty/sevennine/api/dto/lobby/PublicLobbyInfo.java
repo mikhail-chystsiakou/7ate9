@@ -3,8 +3,8 @@ package com.yatty.sevennine.api.dto.lobby;
 public class PublicLobbyInfo {
     private String lobbyId;
     private String lobbyName;
-    private int maxPlayersNum;
-    private int currentPlayersNum;
+    private int maxPlayersNumber;
+    private int currentPlayersNumber;
     
     public String getLobbyId() {
         return lobbyId;
@@ -22,19 +22,19 @@ public class PublicLobbyInfo {
         this.lobbyName = lobbyName;
     }
     
-    public int getMaxPlayersNum() {
-        return maxPlayersNum;
+    public int getMaxPlayersNumber() {
+        return maxPlayersNumber;
     }
     
-    public void setMaxPlayersNum(int maxPlayersNum) {
-        this.maxPlayersNum = maxPlayersNum;
+    public void setMaxPlayersNumber(int maxPlayersNumber) {
+        this.maxPlayersNumber = maxPlayersNumber;
     }
     
-    public int getCurrentPlayersNum() {
-        return currentPlayersNum;
+    public int getCurrentPlayersNumber() {
+        return currentPlayersNumber;
     }
     
-    public void setCurrentPlayersNum(int currentPlayersNum) {
-        this.currentPlayersNum = currentPlayersNum;
+    public void setCurrentPlayersNumber(int currentPlayersNumber) {
+        this.currentPlayersNumber = currentPlayersNumber;
     }
 }

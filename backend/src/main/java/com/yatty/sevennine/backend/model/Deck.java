@@ -19,6 +19,7 @@ public class Deck {
     private ArrayList<Card> deck;
     private Card startCard;
     private int cardsPerPlayer;
+    private int lastIndex;
 
     private static final List<Card> DECK_MODEL = Collections.unmodifiableList(new ArrayList<Card>(DECK_SIZE) {{
         for (int i = 1; i < 11; i++) {
@@ -46,9 +47,14 @@ public class Deck {
     }
 
     public List<Card> pullCards() {
-        if (deck.size() >= cardsPerPlayer) {
-            List<Card> playerList = new ArrayList<>(deck.subList(0, cardsPerPlayer));
-            deck.removeAll(playerList);
+        System.out.println("Cards per player: " + cardsPerPlayer);
+        System.out.println("Deck left size: " + (deck.size() - lastIndex));
+        if (deck.size() - lastIndex >= cardsPerPlayer) {
+            List<Card> playerList = new ArrayList<>();
+            for (int i = lastIndex; i < lastIndex + cardsPerPlayer; i++) {
+                playerList.add(deck.get(i));
+            }
+            lastIndex += cardsPerPlayer;
             return playerList;
         } else {
             throw new EmptyDeckException();
