@@ -10,6 +10,7 @@ public class NewStateNotification {
     private int moveNumber;
     private String moveWinner;
     private boolean lastMove;
+    private boolean stalemate;
     private Card nextCard;
     private GameResult gameResult;
 
@@ -48,7 +49,15 @@ public class NewStateNotification {
     public GameResult getGameResult() {
         return gameResult;
     }
-
+    
+    public boolean isStalemate() {
+        return stalemate;
+    }
+    
+    public void setStalemate(boolean stalemate) {
+        this.stalemate = stalemate;
+    }
+    
     public void setGameResult(GameResult gameResult) {
         this.gameResult = gameResult;
     }

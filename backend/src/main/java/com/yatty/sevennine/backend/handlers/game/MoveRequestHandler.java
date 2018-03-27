@@ -73,6 +73,11 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             CardRotator.refresh(game.getId());
         }
         
+        if (game.isStalemate()) {
+            newStateNotification.setStalemate(true);
+            // TODO: add timer task to update stalemate position
+        }
+        
         game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));
     }
 

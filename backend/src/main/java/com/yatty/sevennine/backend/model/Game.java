@@ -142,6 +142,11 @@ public class Game {
      * @return  true    if no one has move to do
      */
     public boolean isStalemate() {
+        for (Player p : players) {
+            if (p.getCards().stream().filter(this::validateMove).count() > 0) {
+                return false;
+            }
+        }
         return false;
     }
     
