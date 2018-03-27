@@ -87,7 +87,7 @@ public class Game {
      * @return true                 if move has been accepted
      * @throws GameAccessException  if player was not found in the game
      */
-    public boolean acceptMove(Card move, @Nonnull LoginedUser moveAuthor) {
+    public boolean acceptMove(@Nonnull Card move, @Nonnull LoginedUser moveAuthor) {
         logger.debug("Accepting move {} for topCard {}", move, topCard);
         
         if (!validateMove(move)) return false;
@@ -123,7 +123,7 @@ public class Game {
         );
     }
     
-    private boolean validateMove(Card move) {
+    private boolean validateMove(@Nonnull Card move) {
         int greaterVariant = topCard.getValue() + topCard.getModifier();
         if (greaterVariant > 10) greaterVariant -= 10;
         int lesserVariant = topCard.getValue() - topCard.getModifier();
@@ -151,7 +151,7 @@ public class Game {
                 return false;
             }
         }
-        return false;
+        return true;
     }
     
     public String getId() {
