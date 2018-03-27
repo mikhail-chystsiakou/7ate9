@@ -33,6 +33,8 @@ public class Game {
     
     private Card topCard;
     private int moveNumber;
+    
+    private Deck deck;
 
     public Game(String name, int expectedPlayersNum) {
         this.id = UUID.randomUUID().toString();
@@ -46,7 +48,7 @@ public class Game {
      *
      * @param   user                user that wants to join the game
      */
-    public synchronized void addPlayer(LoginedUser user) {
+    public void addPlayer(LoginedUser user) {
         if (players.size() >= expectedPlayersNum) throw new FullLobbyException(this);
         Player player = new Player(user);
         players.add(player);
@@ -70,8 +72,10 @@ public class Game {
      * Initializes player cards and top card
      */
     public void giveOutCards() {
-        Deck deck = new Deck(expectedPlayersNum, false);
-        topCard = deck.getStartCard();
+        if (deck == null) {
+            deck = new SevenAteNineDeck(expectedPlayersNum, false);
+        }
+        topCard = deck.pullStartCard();
         players.forEach(p -> p.setCards(deck.pullCards()));
     }
     
@@ -180,6 +184,10 @@ public class Game {
     
     public Card getTopCard() {
         return topCard;
+    }
+    
+    public void setDeck(Deck deck) {
+        this.deck = deck;
     }
     
     public PublicLobbyInfo getPublicLobbyInfo() {
