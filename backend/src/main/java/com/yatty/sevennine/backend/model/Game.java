@@ -6,14 +6,12 @@ import com.yatty.sevennine.api.dto.lobby.PrivateLobbyInfo;
 import com.yatty.sevennine.api.dto.lobby.PublicLobbyInfo;
 import com.yatty.sevennine.api.dto.model.PlayerInfo;
 import com.yatty.sevennine.backend.exceptions.logic.FullLobbyException;
+import com.yatty.sevennine.backend.exceptions.security.GameAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -77,31 +75,31 @@ public class Game {
         players.forEach(p -> p.setCards(deck.pullCards()));
     }
     
-    public boolean acceptMove(Card move, LoginedUser moveAuthor) {
+    /**
+     * Validates move and updates state if move is right.
+     *
+     * @param move                  move to
+     * @param moveAuthor            author of move
+     * @return true                 if move has been accepted
+     * @throws GameAccessException  if player was not found in the game
+     */
+    public boolean acceptMove(Card move, @Nonnull LoginedUser moveAuthor) {
         logger.debug("Accepting move {} for topCard {}", move, topCard);
+        
+        if (!validateMove(move)) return false;
 
-        int greaterVariant = topCard.getValue() + topCard.getModifier();
-        if (greaterVariant > 10) greaterVariant -= 10;
-        int lesserVariant = topCard.getValue() - topCard.getModifier();
-        if (lesserVariant <= 0) lesserVariant += 10;
-
-        boolean validMove = (move.getValue() == greaterVariant ) || (move.getValue() == lesserVariant);
-
-        if (validMove) {
-            for (Player p : players) {
-                if (p.getLoginedUser().equals(moveAuthor)) {
-                    logger.debug("NOW PLAYER HAS {} CARDS", p.getCards().size());
-                    setTopCard(move);
-                    moveNumber++;
-                    p.cards.remove(move);
-                    if (p.getCards().size() <= 1) {
-                        winner = p;
-                    }
-                    return true;
-                }
-            }
+        Player moveWinner = players.stream()
+                .filter(p -> moveAuthor.equals(p.getLoginedUser()))
+                .findFirst()
+                .orElseThrow(() -> new GameAccessException(moveAuthor, this));
+        
+        setTopCard(move);
+        moveNumber++;
+        moveWinner.removeCard(move);
+        if (moveWinner.getCards().size() <= 1) {
+            winner = moveWinner;
         }
-        return false;
+        return true;
     }
     
     public void setTopCard(Card topCard) {
@@ -121,11 +119,30 @@ public class Game {
         );
     }
     
+    private boolean validateMove(Card move) {
+        int greaterVariant = topCard.getValue() + topCard.getModifier();
+        if (greaterVariant > 10) greaterVariant -= 10;
+        int lesserVariant = topCard.getValue() - topCard.getModifier();
+        if (lesserVariant <= 0) lesserVariant += 10;
+    
+        return (move.getValue() == greaterVariant )
+                || (move.getValue() == lesserVariant);
+    }
+    
     /**
      * @return  unmodifiable view of game players
      */
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
+    }
+    
+    /**
+     * Checks if at least one player has legal move.
+     *
+     * @return  true    if no one has move to do
+     */
+    public boolean isStalemate() {
+        return false;
     }
     
     public String getId() {
@@ -205,11 +222,28 @@ public class Game {
             this.cards = cards;
         }
         
+        void removeCard(Card card) {
+            cards.remove(card);
+        }
+        
         public PlayerResult getResult() {
             PlayerResult playerResult = new PlayerResult();
             playerResult.setPlayerName(loginedUser.getName());
             playerResult.setCardsLeft(cards.size());
             return playerResult;
+        }
+    
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Player player = (Player) o;
+            return Objects.equals(loginedUser, player.loginedUser);
+        }
+    
+        @Override
+        public int hashCode() {
+            return Objects.hash(loginedUser);
         }
     }
 }

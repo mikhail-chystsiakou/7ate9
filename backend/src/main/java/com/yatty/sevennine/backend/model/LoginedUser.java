@@ -44,12 +44,11 @@ public class LoginedUser {
         if (o == null || getClass() != o.getClass()) return false;
         LoginedUser that = (LoginedUser) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(authToken, that.authToken) &&
-                Objects.equals(channel, that.channel);
+                Objects.equals(authToken, that.authToken);
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(name, authToken, channel);
+        return Objects.hash(name, authToken);
     }
 }

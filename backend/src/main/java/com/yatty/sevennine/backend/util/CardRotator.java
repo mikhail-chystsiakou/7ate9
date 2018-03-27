@@ -1,7 +1,7 @@
 package com.yatty.sevennine.backend.util;
 
 import com.yatty.sevennine.api.Card;
-import com.yatty.sevennine.api.dto.game.NewStateEvent;
+import com.yatty.sevennine.api.dto.game.NewStateNotification;
 import com.yatty.sevennine.backend.model.Game;
 
 import java.util.Map;
@@ -62,11 +62,11 @@ public class CardRotator {
                     if (!working.get()) return;
             
                     if ((lastRefreshed.get() + SLEEP_TIME) <= System.currentTimeMillis()) {
-                        NewStateEvent newStateEvent = new NewStateEvent();
-                        newStateEvent.setNextCard(Card.getRandomCard());
-                        game.setTopCard(newStateEvent.getNextCard());
+                        NewStateNotification newStateNotification = new NewStateNotification();
+                        newStateNotification.setNextCard(Card.getRandomCard());
+                        game.setTopCard(newStateNotification.getNextCard());
                         game.getLoginedUsers().forEach(u -> {
-                            u.getChannel().writeAndFlush(newStateEvent);
+                            u.getChannel().writeAndFlush(newStateNotification);
                         });
                         lastRefreshed.set(System.currentTimeMillis());
                     }

@@ -5,10 +5,10 @@ import com.yatty.sevennine.api.dto.*;
 import com.yatty.sevennine.api.dto.auth.LogInRequest;
 import com.yatty.sevennine.api.dto.auth.LogInResponse;
 import com.yatty.sevennine.api.dto.auth.LogOutRequest;
-import com.yatty.sevennine.api.dto.game.GameStartedEvent;
+import com.yatty.sevennine.api.dto.game.GameStartedNotification;
 import com.yatty.sevennine.api.dto.game.MoveRejectedResponse;
 import com.yatty.sevennine.api.dto.game.MoveRequest;
-import com.yatty.sevennine.api.dto.game.NewStateEvent;
+import com.yatty.sevennine.api.dto.game.NewStateNotification;
 import com.yatty.sevennine.api.dto.lobby.*;
 import com.yatty.sevennine.backend.testing.TestMessage;
 
@@ -27,8 +27,9 @@ public class DTOClassMessageTypeMapper {
         classTypeMapping.put(getMessageTypeByDTOClass(MoveRequest.class), MoveRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(CreateLobbyRequest.class), CreateLobbyRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(EnterLobbyRequest.class), EnterLobbyRequest.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(LobbySubscribeRequest.class), LobbySubscribeRequest.class);
-        classTypeMapping.put(getMessageTypeByDTOClass(LobbyUnsubscribeRequest.class), LobbyUnsubscribeRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(LobbyListSubscribeRequest.class), LobbyListSubscribeRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(LobbyListUnsubscribeRequest.class), LobbyListUnsubscribeRequest.class);
+        classTypeMapping.put(getMessageTypeByDTOClass(LeaveLobbyRequest.class), LeaveLobbyRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(KeepAliveRequest.class), KeepAliveRequest.class);
         classTypeMapping.put(getMessageTypeByDTOClass(TestRequest.class), TestRequest.class);
     
@@ -38,15 +39,15 @@ public class DTOClassMessageTypeMapper {
         encodedClasses.add(MoveRequest.class);
         encodedClasses.add(CreateLobbyRequest.class);
         encodedClasses.add(EnterLobbyRequest.class);
-        encodedClasses.add(LobbySubscribeRequest.class);
-        encodedClasses.add(LobbyUnsubscribeRequest.class);
+        encodedClasses.add(LobbyListSubscribeRequest.class);
+        encodedClasses.add(LobbyListUnsubscribeRequest.class);
         encodedClasses.add(KeepAliveRequest.class);
         encodedClasses.add(TestRequest.class);
         
         encodedClasses.add(LogInResponse.class);
-        encodedClasses.add(GameStartedEvent.class);
+        encodedClasses.add(GameStartedNotification.class);
         encodedClasses.add(MoveRejectedResponse.class);
-        encodedClasses.add(NewStateEvent.class);
+        encodedClasses.add(NewStateNotification.class);
         encodedClasses.add(CreateLobbyResponse.class);
         encodedClasses.add(EnterLobbyResponse.class);
         encodedClasses.add(LobbyListUpdatedNotification.class);

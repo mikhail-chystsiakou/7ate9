@@ -6,7 +6,7 @@ import com.yatty.sevennine.api.Card;
 import com.yatty.sevennine.api.GameResult;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NewStateEvent {
+public class NewStateNotification {
     private int moveNumber;
     private String moveWinner;
     private boolean lastMove;

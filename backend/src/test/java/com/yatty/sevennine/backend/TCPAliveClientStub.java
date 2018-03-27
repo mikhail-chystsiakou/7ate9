@@ -7,8 +7,8 @@ import com.yatty.sevennine.api.dto.auth.LogOutRequest;
 import com.yatty.sevennine.api.dto.game.MoveRequest;
 import com.yatty.sevennine.api.dto.lobby.CreateLobbyRequest;
 import com.yatty.sevennine.api.dto.lobby.EnterLobbyRequest;
-import com.yatty.sevennine.api.dto.lobby.LobbySubscribeRequest;
-import com.yatty.sevennine.api.dto.lobby.LobbyUnsubscribeRequest;
+import com.yatty.sevennine.api.dto.lobby.LobbyListSubscribeRequest;
+import com.yatty.sevennine.api.dto.lobby.LobbyListUnsubscribeRequest;
 import com.yatty.sevennine.backend.handlers.ExceptionHandler;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
@@ -21,7 +21,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -129,12 +128,12 @@ public class TCPAliveClientStub extends Application implements Initializable {
     
     @FXML
     public void setSubscribeTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new LobbySubscribeRequest(token)));
+        inputArea.setText(JsonMessageEncoder.encode(new LobbyListSubscribeRequest(token)));
     }
     
     @FXML
     public void setUnsubscribeTemplate() throws Exception {
-        inputArea.setText(JsonMessageEncoder.encode(new LobbyUnsubscribeRequest(token)));
+        inputArea.setText(JsonMessageEncoder.encode(new LobbyListUnsubscribeRequest(token)));
     }
     
     @FXML

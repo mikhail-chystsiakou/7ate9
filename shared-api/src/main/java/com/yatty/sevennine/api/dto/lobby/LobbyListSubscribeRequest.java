@@ -3,13 +3,13 @@ package com.yatty.sevennine.api.dto.lobby;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LobbySubscribeRequest {
+public class LobbyListSubscribeRequest {
     private String authToken;
     
-    public LobbySubscribeRequest() {
+    public LobbyListSubscribeRequest() {
     }
     
-    public LobbySubscribeRequest(String authToken) {
+    public LobbyListSubscribeRequest(String authToken) {
         this.authToken = authToken;
     }
     

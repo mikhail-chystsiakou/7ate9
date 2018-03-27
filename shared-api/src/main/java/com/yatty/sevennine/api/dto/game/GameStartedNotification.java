@@ -7,7 +7,7 @@ import com.yatty.sevennine.api.Card;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameStartedEvent {
+public class GameStartedNotification {
     private Card firstCard;
     private List<Card> playerCards;
     private String lobbyId;

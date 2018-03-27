@@ -3,7 +3,7 @@ package com.yatty.sevennine.backend.handlers.game;
 import com.yatty.sevennine.api.GameResult;
 import com.yatty.sevennine.api.dto.game.MoveRejectedResponse;
 import com.yatty.sevennine.api.dto.game.MoveRequest;
-import com.yatty.sevennine.api.dto.game.NewStateEvent;
+import com.yatty.sevennine.api.dto.game.NewStateNotification;
 import com.yatty.sevennine.backend.exceptions.security.GameAccessException;
 import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.model.GameRegistry;
@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
  *     <li>If move was illegal, sends {@link MoveRejectedResponse} back to
  *     user.</li>
  *
- *     <li>If move was valid, sends {@link NewStateEvent} for all users with
+ *     <li>If move was valid, sends {@link NewStateNotification} for all users with
  *     name of user, that made right move. Also checks if game is over, and if
- *     true, {@link NewStateEvent#lastMove} flag</li>
+ *     true, {@link NewStateNotification#lastMove} flag</li>
  * </ul>
  *
  * @author Mike
@@ -53,27 +53,27 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
 
     private void processRightMove(Game game, LoginedUser moveAuthor,
                                   MoveRequest moveRequestMsg) {
-        NewStateEvent newStateEvent = new NewStateEvent();
-        newStateEvent.setMoveWinner(moveAuthor.getName());
-        newStateEvent.setMoveNumber(game.getMoveNumber());
+        NewStateNotification newStateNotification = new NewStateNotification();
+        newStateNotification.setMoveWinner(moveAuthor.getName());
+        newStateNotification.setMoveNumber(game.getMoveNumber());
         
         if (game.isFinished()) {
-            newStateEvent.setLastMove(true);
+            newStateNotification.setLastMove(true);
             
             GameResult gameResult = new GameResult();
             gameResult.setWinner(game.getWinner().getLoginedUser().getName());
             game.getPlayers().forEach(p -> gameResult.addScore(p.getResult()));
             
-            newStateEvent.setGameResult(gameResult);
+            newStateNotification.setGameResult(gameResult);
 
             GameRegistry.gameFinished(game.getId());
             CardRotator.stop(game.getId());
         } else {
-            newStateEvent.setNextCard(moveRequestMsg.getMove());
+            newStateNotification.setNextCard(moveRequestMsg.getMove());
             CardRotator.refresh(game.getId());
         }
         
-        game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateEvent));
+        game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));
     }
 
     private void processWrongMove(LoginedUser moveAuthor, MoveRequest moveRequestMsg) {

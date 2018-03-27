@@ -1,6 +1,6 @@
 package com.yatty.sevennine.backend.handlers.lobby;
 
-import com.yatty.sevennine.api.dto.game.GameStartedEvent;
+import com.yatty.sevennine.api.dto.game.GameStartedNotification;
 import com.yatty.sevennine.api.dto.lobby.*;
 import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.model.GameRegistry;
@@ -41,12 +41,12 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
             GameRegistry.gameStarted(lobby.getId());
             
             lobby.getPlayers().forEach(p -> {
-                GameStartedEvent gameStartedEvent = new GameStartedEvent();
-                gameStartedEvent.setFirstCard(lobby.getTopCard());
-                gameStartedEvent.setPlayerCards(p.getCards());
-                gameStartedEvent.setLobbyId(msg.getLobbyId());
+                GameStartedNotification gameStartedNotification = new GameStartedNotification();
+                gameStartedNotification.setFirstCard(lobby.getTopCard());
+                gameStartedNotification.setPlayerCards(p.getCards());
+                gameStartedNotification.setLobbyId(msg.getLobbyId());
                 
-                p.getLoginedUser().getChannel().writeAndFlush(gameStartedEvent);
+                p.getLoginedUser().getChannel().writeAndFlush(gameStartedNotification);
             });
             
             CardRotator.start(lobby);
