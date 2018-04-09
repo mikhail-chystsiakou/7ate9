@@ -1,7 +1,7 @@
-package com.yatty.sevennine.backend.handlers.codecs;
+package com.yatty.sevennine.util.codecs;
 
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
 @JsonAppend(attrs = {@JsonAppend.Attr(DTOClassMessageTypeMapper.MAPPING_FIELD)})
-public abstract class DTOTypeMappingMixin {
+abstract class DTOTypeMappingMixin {
 }

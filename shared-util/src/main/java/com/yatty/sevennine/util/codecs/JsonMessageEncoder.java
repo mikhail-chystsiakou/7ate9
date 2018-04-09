@@ -1,4 +1,4 @@
-package com.yatty.sevennine.backend.handlers.codecs;
+package com.yatty.sevennine.util.codecs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,12 +12,13 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Function;
 
 @ChannelHandler.Sharable
-public class JsonMessageEncoder extends MessageToMessageEncoder<Object> {
+public class JsonMessageEncoder extends MessageToMessageEncoder<Object> implements Function<Object, String> {
     private static Logger logger = LoggerFactory.getLogger(JsonMessageEncoder.class);
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -44,18 +45,23 @@ public class JsonMessageEncoder extends MessageToMessageEncoder<Object> {
         out.add(byteBuf);
     }
     
-    private static String encode(Object obj, ObjectWriter objectWriter) throws JsonProcessingException {
-        return objectWriter.writeValueAsString(obj);
+    @Override
+    public String apply(Object obj) {
+        try {
+            ObjectMapper objectMapper = DTOClassMessageTypeMapper.prepareObjectMapper();
+            ObjectWriter objectWriter = objectMapper
+                    .writerWithDefaultPrettyPrinter()
+                    .withAttribute(
+                            DTOClassMessageTypeMapper.MAPPING_FIELD,
+                            DTOClassMessageTypeMapper.getMessageTypeByDTOClass(obj.getClass())
+                    );
+            return encode(obj, objectWriter);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
     
-    public static String encode(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = DTOClassMessageTypeMapper.prepareObjectMapper();
-        ObjectWriter objectWriter = objectMapper
-                .writerWithDefaultPrettyPrinter()
-                .withAttribute(
-                        DTOClassMessageTypeMapper.MAPPING_FIELD,
-                        DTOClassMessageTypeMapper.getMessageTypeByDTOClass(obj.getClass())
-                );
-        return encode(obj, objectWriter);
+    private static String encode(Object obj, ObjectWriter objectWriter) throws JsonProcessingException {
+        return objectWriter.writeValueAsString(obj);
     }
 }

@@ -3,14 +3,14 @@ package com.yatty.sevennine.backend;
 import com.yatty.sevennine.backend.handlers.*;
 import com.yatty.sevennine.backend.handlers.auth.LogInHandler;
 import com.yatty.sevennine.backend.handlers.auth.LogOutHandler;
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
 import com.yatty.sevennine.backend.handlers.game.MoveRequestHandler;
 import com.yatty.sevennine.backend.handlers.lobby.CreateLobbyHandler;
 import com.yatty.sevennine.backend.handlers.lobby.EnterLobbyHandler;
 import com.yatty.sevennine.backend.handlers.lobby.LobbySubscribeHandler;
 import com.yatty.sevennine.backend.handlers.lobby.LobbyUnsubscribeHandler;
-import com.yatty.sevennine.backend.util.PropertiesProvider;
+import com.yatty.sevennine.util.PropertiesProvider;
+import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
+import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -77,6 +77,7 @@ public class TCPServer {
                 logger.debug("Initializing socket channel...");
                 
                 ch.pipeline().addFirst("jsonObjectDecoder", new JsonObjectDecoder());
+                // initialized here because decoders are not shareable in netty :(
                 ch.pipeline().addFirst("decodeHandler", new JsonMessageDecoder());
     
                 ch.pipeline().addLast("testHandler", testHandler);
@@ -94,10 +95,9 @@ public class TCPServer {
                 ch.pipeline().addLast("encodeHandler", encoder);
                 
                 ch.pipeline().addLast("cleanupHandler", exceptionHandler);
-                
-                System.out.println("Channel initialized");
             } catch (Exception e) {
                 logger.error("Exception during channel initialization", e);
+                throw e;
             }
         }
     }

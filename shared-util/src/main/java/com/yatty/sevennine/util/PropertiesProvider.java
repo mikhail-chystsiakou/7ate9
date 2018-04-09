@@ -1,8 +1,9 @@
-package com.yatty.sevennine.backend.util;
+package com.yatty.sevennine.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -23,13 +24,34 @@ public class PropertiesProvider {
         String PORT = "port";
         String HOST = "host";
     }
+    
+    public interface Game {
+        String FILE_NAME = "game.properties";
+        String STALEMATE_DELAY_MILLISECONDS = "stalemate_delay_milliseconds";
+    }
 
     public static Properties getEnvironmentProperties() throws IOException {
-        if (propertiesCache.containsKey(Environment.FILE_NAME)) {
-            return propertiesCache.get(Environment.FILE_NAME);
+        return lookupAndGet(Environment.FILE_NAME);
+    }
+    
+    public static Properties getGameProperties() throws IOException {
+        return lookupAndGet(Game.FILE_NAME);
+    }
+    
+    /**
+     * Tries to load properties from cache, loads from file
+     * otherwise.
+     *
+     * @param fileName      properties file name
+     * @return  requested properties file
+     * @throws IOException if IO error occurs
+     */
+    private static Properties lookupAndGet(@Nonnull String fileName) throws IOException {
+        if (propertiesCache.containsKey(fileName)) {
+            return propertiesCache.get(fileName);
         } else {
-            Properties loadedProperties = loadPropertiesFile(Environment.FILE_NAME);
-            propertiesCache.put(Environment.FILE_NAME, loadedProperties);
+            Properties loadedProperties = loadPropertiesFile(fileName);
+            propertiesCache.put(fileName, loadedProperties);
             return loadedProperties;
         }
     }

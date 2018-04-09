@@ -2,9 +2,9 @@ package com.yatty.sevennine.backend.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yatty.sevennine.api.dto.auth.LogInRequest;
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageEncoder;
-import com.yatty.sevennine.backend.util.PropertiesProvider;
+import com.yatty.sevennine.util.PropertiesProvider;
+import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
+import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

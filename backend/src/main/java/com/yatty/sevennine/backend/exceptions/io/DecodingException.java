@@ -18,8 +18,4 @@ public class DecodingException extends SevenNineException {
     public DecodingException(Throwable cause) {
         super(cause);
     }
-
-    protected DecodingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

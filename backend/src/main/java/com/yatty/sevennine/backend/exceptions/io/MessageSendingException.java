@@ -18,8 +18,4 @@ public class MessageSendingException extends SevenNineException {
     public MessageSendingException(Throwable cause) {
         super(cause);
     }
-
-    protected MessageSendingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

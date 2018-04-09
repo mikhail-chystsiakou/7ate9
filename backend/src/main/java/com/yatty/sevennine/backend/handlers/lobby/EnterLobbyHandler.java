@@ -32,6 +32,8 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         
         EnterLobbyResponse response = new EnterLobbyResponse();
         response.setPrivateLobbyInfo(lobby.getPrivateLobbyInfo());
+    
+        System.out.println("Entering lobby...");
         
         ctx.channel().writeAndFlush(response).sync();
         

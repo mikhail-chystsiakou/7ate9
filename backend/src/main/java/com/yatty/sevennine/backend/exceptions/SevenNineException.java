@@ -20,10 +20,6 @@ public class SevenNineException extends RuntimeException {
         super(cause);
     }
 
-    protected SevenNineException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-    
     public String getShortDescription() {
         return shortDescription;
     }

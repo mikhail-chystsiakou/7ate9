@@ -10,11 +10,15 @@ import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.LoginedUser;
 import com.yatty.sevennine.backend.model.UserRegistry;
 import com.yatty.sevennine.backend.util.CardRotator;
+import com.yatty.sevennine.util.PropertiesProvider;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.concurrent.*;
 
 /**
  * Processes users' moves.
@@ -33,6 +37,18 @@ import org.slf4j.LoggerFactory;
 @ChannelHandler.Sharable
 public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest> {
     private static final Logger logger = LoggerFactory.getLogger(MoveRequestHandler.class);
+    private static ScheduledExecutorService staleMateService =
+            Executors.newScheduledThreadPool(1);
+    private static long stalemateDelay;
+    
+    static {
+        try {
+            stalemateDelay = Long.valueOf(PropertiesProvider.getGameProperties()
+                    .getProperty(PropertiesProvider.Game.STALEMATE_DELAY_MILLISECONDS));
+        } catch (IOException | NumberFormatException e) {
+            stalemateDelay = 3000;
+        }
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx,
@@ -75,7 +91,9 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         
         if (game.isStalemate()) {
             newStateNotification.setStalemate(true);
-            // TODO: add timer task to update stalemate position
+            staleMateService.schedule(() -> {
+                game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));
+            }, stalemateDelay, TimeUnit.MILLISECONDS);
         }
         
         game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));

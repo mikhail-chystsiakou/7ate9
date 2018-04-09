@@ -1,6 +1,6 @@
 package com.yatty.sevennine.backend;
 
-import com.yatty.sevennine.backend.util.PropertiesProvider;
+import com.yatty.sevennine.util.PropertiesProvider;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -13,7 +13,6 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;

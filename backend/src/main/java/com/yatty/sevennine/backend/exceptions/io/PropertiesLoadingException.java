@@ -18,8 +18,4 @@ public class PropertiesLoadingException extends SevenNineException {
     public PropertiesLoadingException(Throwable cause) {
         super(cause);
     }
-
-    protected PropertiesLoadingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

@@ -1,6 +1,6 @@
 package com.yatty.sevennine.backend;
 
-import com.yatty.sevennine.backend.handlers.codecs.JsonMessageDecoder;
+import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
