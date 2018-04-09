@@ -3,9 +3,7 @@ package com.yatty.sevennine.client;
 import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 
 import java.util.ArrayList;
@@ -55,19 +53,5 @@ public class SevenAteNineClientChannelInitializer extends ChannelInitializer<Soc
     
     public <T> void addHandler(Consumer<T> handler, Class<T> messageType) {
         this.handlers.add(new MessageHandler<>(handler, messageType));
-    }
-    
-    class MessageHandler<T> extends SimpleChannelInboundHandler<T> {
-        private Consumer<T> consumer;
-        
-        MessageHandler(Consumer<T> consumer, Class<T> clazz) {
-            super(clazz);
-            this.consumer = consumer;
-        }
-        
-        @Override
-        protected void channelRead0(ChannelHandlerContext ctx, T msg) throws Exception {
-            consumer.accept(msg);
-        }
     }
 }

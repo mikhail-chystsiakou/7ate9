@@ -33,9 +33,19 @@ public class SynchronousClient extends SevenAteNineClient {
         return waitForResponse(responseType);
     }
     
+    public <T> T sendMessage(Object request,
+                             Class<T> responseType) {
+        super.sendMessage(request);
+        return waitForResponse(responseType);
+    }
+    
     public void sendMessage(Object request,
                              boolean keepAlive) {
         super.sendMessage(request, keepAlive);
+    }
+    
+    public void sendMessage(Object request) {
+        super.sendMessage(request);
     }
     
     private <T> T waitForResponse(Class<T> responseType) {

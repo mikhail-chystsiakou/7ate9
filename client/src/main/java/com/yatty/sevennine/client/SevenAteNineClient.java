@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.function.Consumer;
 
 public class SevenAteNineClient {
     private static final Logger logger = LoggerFactory.getLogger(SevenAteNineClient.class);
@@ -34,6 +35,10 @@ public class SevenAteNineClient {
         eventLoopGroup = new NioEventLoopGroup(1);
         
         connect();
+    }
+    
+    public void sendMessage(Object message) {
+        sendMessage(message, keepAlive);
     }
     
     public void sendMessage(Object message, boolean keepAlive) {
@@ -79,5 +84,9 @@ public class SevenAteNineClient {
                 logger.debug("Connection closed, do not reopen");
             }
         });
+    }
+    
+    public <T> void addMessageHandler(Consumer<T> handler, Class<T> messageType) {
+        aliveChannel.pipeline().addLast(new MessageHandler<>(handler, messageType));
     }
 }
