@@ -53,8 +53,6 @@ public class SevenAteNineDeck implements Deck {
     
     @Override
     public List<Card> pullCards() {
-        System.out.println("Cards per player: " + cardsPerPlayer);
-        System.out.println("SevenAteNineDeck left size: " + (deck.size() - lastIndex));
         if (deck.size() - lastIndex >= cardsPerPlayer) {
             List<Card> playerList = new ArrayList<>();
             for (int i = lastIndex; i < lastIndex + cardsPerPlayer; i++) {

@@ -37,7 +37,7 @@ import java.util.concurrent.*;
 @ChannelHandler.Sharable
 public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest> {
     private static final Logger logger = LoggerFactory.getLogger(MoveRequestHandler.class);
-    private static ScheduledExecutorService staleMateService =
+    private static ScheduledExecutorService stalemateService =
             Executors.newScheduledThreadPool(1);
     private static long stalemateDelay;
     
@@ -53,13 +53,13 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx,
                                 MoveRequest msg) throws Exception {
-        logger.debug("Got move request: {}", msg.getMove());
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
         Game game = GameRegistry.getGameById(msg.getGameId());
         if (!game.checkUserJoined(user)) {
             throw new GameAccessException(user, game);
         }
-
+        
+        logger.debug("Accepting move {} from '{}'", msg.getMove(), user.getName());
         if (game.acceptMove(msg.getMove(), user)) {
             processRightMove(game, user, msg);
         } else {
@@ -88,11 +88,21 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             newStateNotification.setNextCard(moveRequestMsg.getMove());
             CardRotator.refresh(game.getId());
         }
-        
-        if (game.isStalemate()) {
+        game.getPlayers().forEach(p -> {
+            logger.debug("Player: {}, Cards: {}", p.getLoginedUser().getAuthToken(), p.getCards());
+        });
+        logger.debug("Stalemate: {}", game.isStalemate());
+        if (!game.isFinished() && game.isStalemate()) {
             newStateNotification.setStalemate(true);
-            staleMateService.schedule(() -> {
-                game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));
+    
+            logger.debug("Stalemate detected!");
+            stalemateService.schedule(() -> {
+                while (game.isStalemate()) game.setRandomTopCard();
+                logger.debug("Stalemate set new card: {}", game.getTopCard());
+                NewStateNotification stalemateCardNotification = new NewStateNotification();
+                stalemateCardNotification.setStalemate(false);
+                stalemateCardNotification.setNextCard(game.getTopCard());
+                game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(stalemateCardNotification));
             }, stalemateDelay, TimeUnit.MILLISECONDS);
         }
         

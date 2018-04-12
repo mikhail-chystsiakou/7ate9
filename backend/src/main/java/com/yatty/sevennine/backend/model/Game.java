@@ -88,9 +88,12 @@ public class Game {
      * @throws GameAccessException  if player was not found in the game
      */
     public boolean acceptMove(@Nonnull Card move, @Nonnull LoginedUser moveAuthor) {
-        logger.debug("Accepting move {} for topCard {}", move, topCard);
+        logger.trace("Accepting move {} for topCard {}", move, topCard);
         
-        if (!validateMove(move)) return false;
+        if (!topCard.acceptNext(move)) {
+            logger.trace("Rejecting move {} for topCard {}", move, topCard);
+            return false;
+        }
 
         Player moveWinner = players.stream()
                 .filter(p -> moveAuthor.equals(p.getLoginedUser()))
@@ -123,16 +126,6 @@ public class Game {
         );
     }
     
-    private boolean validateMove(@Nonnull Card move) {
-        int greaterVariant = topCard.getValue() + topCard.getModifier();
-        if (greaterVariant > 10) greaterVariant -= 10;
-        int lesserVariant = topCard.getValue() - topCard.getModifier();
-        if (lesserVariant <= 0) lesserVariant += 10;
-    
-        return (move.getValue() == greaterVariant )
-                || (move.getValue() == lesserVariant);
-    }
-    
     /**
      * @return  unmodifiable view of game players
      */
@@ -147,11 +140,16 @@ public class Game {
      */
     public boolean isStalemate() {
         for (Player p : players) {
-            if (p.getCards().stream().filter(this::validateMove).count() > 0) {
+            if (p.getCards().stream().filter(topCard::acceptNext).count() > 0) {
                 return false;
             }
         }
         return true;
+    }
+    
+    public void setRandomTopCard() {
+//        List<Integer> available
+        topCard = Card.getRandomCard();
     }
     
     public String getId() {

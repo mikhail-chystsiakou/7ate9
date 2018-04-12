@@ -1,12 +1,12 @@
 package com.yatty.sevennine.client;
 
 import com.yatty.sevennine.api.dto.ErrorResponse;
-import com.yatty.sevennine.api.dto.auth.LogInResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
 
 /**
  * Provides synchronous communication with server
@@ -19,24 +19,31 @@ public class SynchronousClient extends SevenAteNineClient {
     public SynchronousClient(InetSocketAddress serverAddress,
                              SevenAteNineClientChannelInitializer channelInitializer) {
         super(serverAddress, channelInitializer);
-        
-        channelInitializer.addHandler(o -> {
-            lastResponse = o;
-            responseAvailable.release();
-        }, Object.class);
     }
     
     public <T> T sendMessage(Object request,
                              Class<T> responseType,
                              boolean keepAlive) {
+        MessageHandler<T> messageHandler = addMessageHandler(o -> {
+            lastResponse = o;
+            responseAvailable.release();
+        }, responseType);
         super.sendMessage(request, keepAlive);
-        return waitForResponse(responseType);
+        T response = waitForResponse(responseType);
+        removeMessageHandler(messageHandler);
+        return response;
     }
     
     public <T> T sendMessage(Object request,
                              Class<T> responseType) {
+        MessageHandler<T> messageHandler = addMessageHandler(o -> {
+            lastResponse = o;
+            responseAvailable.release();
+        }, responseType);
         super.sendMessage(request);
-        return waitForResponse(responseType);
+        T response = waitForResponse(responseType);
+        removeMessageHandler(messageHandler);
+        return response;
     }
     
     public void sendMessage(Object request,
@@ -50,16 +57,18 @@ public class SynchronousClient extends SevenAteNineClient {
     
     private <T> T waitForResponse(Class<T> responseType) {
         try {
-            responseAvailable.acquire();
-            if (responseType.isInstance(lastResponse)) {
-                return responseType.cast(lastResponse);
-            } else if (ErrorResponse.class.isInstance(lastResponse)) {
-                throw new ServerException((ErrorResponse)lastResponse);
-            } else {
-                logger.error("Got unexpected error {}. Expected type: {}.",
-                        lastResponse, responseType);
-                throw new ClientException("Got unexpected response type "
-                        + lastResponse.getClass() + ". Expected type: " + responseType);
+            while (true) {
+                responseAvailable.acquire();
+                if (responseType.isInstance(lastResponse)) {
+                    return responseType.cast(lastResponse);
+                } else if (ErrorResponse.class.isInstance(lastResponse)) {
+                    throw new ServerException((ErrorResponse) lastResponse);
+                } else {
+                    logger.error("Got unexpected type {}. Expected type: {}.",
+                            lastResponse, responseType);
+//                    throw new ClientException("Got unexpected response type "
+//                            + lastResponse.getClass() + ". Expected type: " + responseType);
+                }
             }
         } catch (InterruptedException e) {
             throw new ClientException("Client was interrupted during waiting for response", e);

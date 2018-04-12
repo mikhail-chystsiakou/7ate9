@@ -2,6 +2,7 @@ package com.yatty.sevennine.api.dto.game;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.yatty.sevennine.api.Card;
 import com.yatty.sevennine.api.GameResult;
 
@@ -13,7 +14,10 @@ public class NewStateNotification {
     private boolean stalemate;
     private Card nextCard;
     private GameResult gameResult;
-
+    
+    public NewStateNotification() {
+    }
+    
     public int getMoveNumber() {
         return moveNumber;
     }

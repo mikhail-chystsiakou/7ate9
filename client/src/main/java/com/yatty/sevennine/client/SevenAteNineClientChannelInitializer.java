@@ -5,6 +5,7 @@ import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.json.JsonObjectDecoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,8 @@ public class SevenAteNineClientChannelInitializer extends ChannelInitializer<Soc
     
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        ch.pipeline().addFirst(decoder);
+        ch.pipeline().addFirst("jsonObjectDecoder", new JsonObjectDecoder());
+        ch.pipeline().addLast(decoder);
         for (ChannelHandler handler : handlers) {
             ch.pipeline().addLast(handler);
         }

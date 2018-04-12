@@ -10,10 +10,12 @@ public class SevenNineException extends RuntimeException {
 
     public SevenNineException(String message) {
         super(message);
+        setShortDescription(message);
     }
 
     public SevenNineException(String message, Throwable cause) {
         super(message, cause);
+        setShortDescription(message);
     }
 
     public SevenNineException(Throwable cause) {

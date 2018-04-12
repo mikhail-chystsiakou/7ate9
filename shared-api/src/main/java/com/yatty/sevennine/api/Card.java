@@ -35,6 +35,16 @@ public class Card {
         return new Card(random.nextInt(10) + 1, random.nextInt(3) + 1);
     }
     
+    public boolean acceptNext(Card card) {
+        int greaterVariant = this.getValue() + this.getModifier();
+        if (greaterVariant > 10) greaterVariant -= 10;
+        int lesserVariant = this.getValue() - this.getModifier();
+        if (lesserVariant <= 0) lesserVariant += 10;
+    
+        return (card.getValue() == greaterVariant )
+                || (card.getValue() == lesserVariant);
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -2,10 +2,7 @@ package com.yatty.sevennine.client;
 
 import com.yatty.sevennine.api.dto.KeepAliveRequest;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -28,7 +25,7 @@ public class SevenAteNineClient {
         this.channelInitializer = channelInitializer;
     }
     
-    public void start() throws InterruptedException {
+    public void start() {
         if (eventLoopGroup != null) {
             throw new IllegalStateException("Client is running already!");
         }
@@ -68,13 +65,19 @@ public class SevenAteNineClient {
         }
     }
     
-    private void connect() throws InterruptedException {
+    private void connect() {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(eventLoopGroup)
                 .channel(NioSocketChannel.class)
                 .remoteAddress(serverAddress)
                 .handler(channelInitializer);
-        aliveChannel = bootstrap.connect().sync().channel();
+        try {
+            aliveChannel = bootstrap.connect().sync().channel();
+        } catch (InterruptedException e) {
+            logger.error("Failed to connect to {}", serverAddress, e);
+            throw new RuntimeException("Failed to connect to " + serverAddress, e);
+        }
+        System.out.println(aliveChannel.pipeline());
         aliveChannel.closeFuture().addListener(e -> {
             if (keepAlive) {
                 logger.debug("Connection closed, reopening...");
@@ -86,7 +89,13 @@ public class SevenAteNineClient {
         });
     }
     
-    public <T> void addMessageHandler(Consumer<T> handler, Class<T> messageType) {
-        aliveChannel.pipeline().addLast(new MessageHandler<>(handler, messageType));
+    public <T> MessageHandler<T> addMessageHandler(Consumer<T> handler, Class<T> messageType) {
+        MessageHandler<T> messageHandler = new MessageHandler<>(handler, messageType);
+        aliveChannel.pipeline().addLast(messageHandler);
+        return messageHandler;
+    }
+    
+    public void removeMessageHandler(ChannelHandler handler) {
+        aliveChannel.pipeline().remove(handler);
     }
 }

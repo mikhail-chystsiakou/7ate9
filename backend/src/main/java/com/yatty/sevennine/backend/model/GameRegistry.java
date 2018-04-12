@@ -16,7 +16,7 @@ public class GameRegistry {
     private static final Map<String, Game> runningGames = new ConcurrentHashMap<>();
 
     public static void registerLobby(Game game) {
-        logger.debug("Registering new logic '{}' with id '{}'",
+        logger.debug("Registering new lobby '{}' with id '{}'",
                 game.getName(), game.getId());
         lobbyMap.put(game.getId(), game);
     }
