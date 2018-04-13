@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,18 +55,16 @@ public class Game {
         players.add(player);
     }
     
-    /**
-     * Checks, that user has already joined this game.
-     *
-     * @param user                  user to check
-     */
-    public boolean checkUserJoined(LoginedUser user) {
+    public void removePlayer(LoginedUser user) {
+        checkUserJoined(user);
         for (Player p : players) {
             if (p.getLoginedUser().equals(user)) {
-                return true;
+                players.remove(p);
             }
         }
-        return false;
+        if (players.size() == 1) {
+            winner = players.get(0);
+        }
     }
     
     /**
@@ -88,6 +87,8 @@ public class Game {
      * @throws GameAccessException  if player was not found in the game
      */
     public boolean acceptMove(@Nonnull Card move, @Nonnull LoginedUser moveAuthor) {
+        checkUserJoined(moveAuthor);
+        
         logger.trace("Accepting move {} for topCard {}", move, topCard);
         
         if (!topCard.acceptNext(move)) {
@@ -147,9 +148,11 @@ public class Game {
         return true;
     }
     
-    public void setRandomTopCard() {
-//        List<Integer> available
-        topCard = Card.getRandomCard();
+    public void fixStalemate() {
+        // TODO: add logic here
+        while (isStalemate()) {
+            topCard = Card.getRandomCard();
+        }
     }
     
     public String getId() {
@@ -173,9 +176,10 @@ public class Game {
     }
     
     public boolean isFinished() {
-        return winner != null;
+        return winner != null || players.size() == 0;
     }
     
+    @Nullable
     public Player getWinner() {
         return winner;
     }
@@ -205,6 +209,22 @@ public class Game {
                 .collect(Collectors.toList())
         );
         return privateLobbyInfo;
+    }
+    
+    
+    /**
+     * Checks, that user has already joined this game.
+     *
+     * @param user                  user to check
+     * @throws GameAccessException  if user has not joined the game
+     */
+    public void checkUserJoined(LoginedUser user) throws GameAccessException {
+        for (Player p : players) {
+            if (p.getLoginedUser().equals(user)) {
+                return;
+            }
+        }
+        throw new GameAccessException(user, this);
     }
     
     /**

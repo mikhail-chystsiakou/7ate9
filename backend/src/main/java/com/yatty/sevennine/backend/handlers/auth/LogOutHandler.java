@@ -1,6 +1,10 @@
 package com.yatty.sevennine.backend.handlers.auth;
 
+import com.yatty.sevennine.api.GameResult;
 import com.yatty.sevennine.api.dto.auth.LogOutRequest;
+import com.yatty.sevennine.api.dto.game.NewStateNotification;
+import com.yatty.sevennine.backend.model.Game;
+import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.LoginedUser;
 import com.yatty.sevennine.backend.model.UserRegistry;
 import io.netty.channel.ChannelHandler;

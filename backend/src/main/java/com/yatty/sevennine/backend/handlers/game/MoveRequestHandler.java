@@ -55,9 +55,6 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
                                 MoveRequest msg) throws Exception {
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
         Game game = GameRegistry.getGameById(msg.getGameId());
-        if (!game.checkUserJoined(user)) {
-            throw new GameAccessException(user, game);
-        }
         
         logger.debug("Accepting move {} from '{}'", msg.getMove(), user.getName());
         if (game.acceptMove(msg.getMove(), user)) {
@@ -88,16 +85,18 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             newStateNotification.setNextCard(moveRequestMsg.getMove());
             CardRotator.refresh(game.getId());
         }
-        game.getPlayers().forEach(p -> {
-            logger.debug("Player: {}, Cards: {}", p.getLoginedUser().getAuthToken(), p.getCards());
-        });
-        logger.debug("Stalemate: {}", game.isStalemate());
+        if (logger.isTraceEnabled()) {
+            game.getPlayers().forEach(p -> {
+                logger.trace("Player: {}, Cards left: {}", p.getLoginedUser().getAuthToken(), p.getCards());
+            });
+        }
+        
         if (!game.isFinished() && game.isStalemate()) {
             newStateNotification.setStalemate(true);
     
-            logger.debug("Stalemate detected!");
+            logger.trace("Stalemate detected!");
             stalemateService.schedule(() -> {
-                while (game.isStalemate()) game.setRandomTopCard();
+                game.fixStalemate();
                 logger.debug("Stalemate set new card: {}", game.getTopCard());
                 NewStateNotification stalemateCardNotification = new NewStateNotification();
                 stalemateCardNotification.setStalemate(false);
