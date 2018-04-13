@@ -36,6 +36,7 @@ public class DTOClassMessageTypeMapper {
             CreateLobbyResponse.class,
             EnterLobbyRequest.class,
             EnterLobbyResponse.class,
+            LobbyStateChangedNotification.class,
             LobbyListUpdatedNotification.class,
             ErrorResponse.class
         );

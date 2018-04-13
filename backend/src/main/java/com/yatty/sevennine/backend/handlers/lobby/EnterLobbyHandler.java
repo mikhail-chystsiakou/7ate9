@@ -28,12 +28,20 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         lobby.addPlayer(user);
         user.setChannel(ctx.channel());
         
-        UserRegistry.addSubscriber(msg.getAuthToken());
+//        UserRegistry.addSubscriber(msg.getAuthToken());
         
         EnterLobbyResponse response = new EnterLobbyResponse();
         response.setPrivateLobbyInfo(lobby.getPrivateLobbyInfo());
         
         ctx.channel().writeAndFlush(response).sync();
+    
+        LobbyStateChangedNotification newLobbyState =
+                new LobbyStateChangedNotification(lobby.getPrivateLobbyInfo());
+        lobby.getPlayers().forEach(p -> {
+            if (!p.getLoginedUser().equals(user)) { // do not send update to update initiator
+                p.getLoginedUser().getChannel().writeAndFlush(newLobbyState);
+            }
+        });
         
         if (lobby.isFull()) {
             lobby.giveOutCards();
