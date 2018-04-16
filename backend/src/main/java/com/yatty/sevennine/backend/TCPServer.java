@@ -3,6 +3,7 @@ package com.yatty.sevennine.backend;
 import com.yatty.sevennine.backend.handlers.*;
 import com.yatty.sevennine.backend.handlers.auth.LogInHandler;
 import com.yatty.sevennine.backend.handlers.auth.LogOutHandler;
+import com.yatty.sevennine.backend.handlers.game.LeaveGameRequestHandler;
 import com.yatty.sevennine.backend.handlers.game.MoveRequestHandler;
 import com.yatty.sevennine.backend.handlers.lobby.CreateLobbyHandler;
 import com.yatty.sevennine.backend.handlers.lobby.EnterLobbyHandler;
@@ -68,6 +69,7 @@ public class TCPServer {
         private ChannelHandler logOutHandler = new LogOutHandler();
         private ChannelHandler lobbySubscribeHandler = new LobbySubscribeHandler();
         private ChannelHandler enterLobbyHandler = new EnterLobbyHandler();
+        private ChannelHandler leaveGameRequestHandler = new LeaveGameRequestHandler();
         private ChannelHandler lobbyUnsubscribeHandler = new LobbyUnsubscribeHandler();
         private ChannelHandler createLobbyHandler = new CreateLobbyHandler();
     
@@ -89,6 +91,7 @@ public class TCPServer {
                 ch.pipeline().addLast("enterLobbyHandler", enterLobbyHandler);
                 ch.pipeline().addLast("lobbyUnsubscribeHandler", lobbyUnsubscribeHandler);
                 ch.pipeline().addLast("createLobbyHandler", createLobbyHandler);
+                ch.pipeline().addLast("leaveGameRequestHandler", leaveGameRequestHandler);
                 
                 ch.pipeline().addLast("moveRequestHandler", moveRequestHandler);
     

@@ -10,6 +10,7 @@ import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.LoginedUser;
 import com.yatty.sevennine.backend.model.UserRegistry;
 import com.yatty.sevennine.backend.util.CardRotator;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
+@ChannelHandler.Sharable
 public class LeaveGameRequestHandler extends SimpleChannelInboundHandler<LeaveGameRequest> {
     private static final Logger logger = LoggerFactory.getLogger(LeaveGameRequestHandler.class);
     

@@ -55,7 +55,6 @@ public class AI {
     public void run() {
         login();
         while (games > 0) {
-            logger.debug("Starting new game");
             enterLobby();
             waitForStart();
             playGame();
@@ -146,11 +145,10 @@ public class AI {
                 lastMove = move;
                 logger.debug("Moved: {}. Cards left: {}", move, cards);
             }
-            logger.debug("Before lock");
+            
             synchronized (gameMoveLock) {
                 try {
                     while (!gameUpdated) {
-                        logger.debug("Waiting in lock...");
                         gameMoveLock.wait();
                     }
                 } catch (InterruptedException e) {
@@ -158,7 +156,6 @@ public class AI {
                 }
                 gameUpdated = false;
             }
-            logger.debug("After lock, topCard: {}", topCard);
         } while (topCard != null);
         gameId = null;
     }
@@ -205,7 +202,6 @@ public class AI {
                 }
                 lastMove = null;
                 gameMoveLock.notify();
-                logger.debug("Notified!");
             }
         }, NewStateNotification.class);
     

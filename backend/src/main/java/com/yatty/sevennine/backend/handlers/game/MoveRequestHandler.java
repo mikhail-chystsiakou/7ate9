@@ -74,16 +74,18 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             newStateNotification.setLastMove(true);
             
             GameResult gameResult = new GameResult();
-            gameResult.setWinner(game.getWinner().getLoginedUser().getName());
+            if (game.getWinner() != null) {
+                gameResult.setWinner(game.getWinner().getLoginedUser().getName());
+            }
             game.getPlayers().forEach(p -> gameResult.addScore(p.getResult()));
             
             newStateNotification.setGameResult(gameResult);
 
             GameRegistry.gameFinished(game.getId());
-            CardRotator.stop(game.getId());
+//            CardRotator.stop(game.getId());
         } else {
             newStateNotification.setNextCard(moveRequestMsg.getMove());
-            CardRotator.refresh(game.getId());
+//            CardRotator.refresh(game.getId());
         }
         if (logger.isTraceEnabled()) {
             game.getPlayers().forEach(p -> {

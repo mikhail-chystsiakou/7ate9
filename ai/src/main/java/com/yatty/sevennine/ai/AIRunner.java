@@ -2,13 +2,18 @@ package com.yatty.sevennine.ai;
 
 import com.yatty.sevennine.client.SevenAteNineClientFactory;
 import com.yatty.sevennine.client.SynchronousClient;
+import com.yatty.sevennine.util.PropertiesProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.Properties;
 
 /**
  * Starts one SevenAteNine AI.
  * Options format:
- *      AIRunner [sever-ip] [server-port] [difficulty] [games] [hosting] [players]
+// *      AIRunner [sever-ip] [server-port] [difficulty] [games] [hosting] [players]
+ *      AIRunner [difficulty] [games] [hosting] [players]
  * <ul>
  *     <li>server-ip — IP of game server</li>
  *     <li>server-port — port of game server</li>
@@ -21,18 +26,25 @@ import java.net.InetSocketAddress;
  * @version 10.03.18
  */
 public class AIRunner {
+    public static final Logger logger = LoggerFactory.getLogger(AIRunner.class);
+    
     private InetSocketAddress serverAddress;
     private boolean hosting = false;
     private Difficulty difficulty = Difficulty.MEDIUM;
     private int games = 1;
     private int players = 2;
     
-    private static final int SERVER_IP_PARAM = 0;
-    private static final int SERVER_PORT_PARAM = 1;
-    private static final int DIFFICULTY_PARAM = 2;
-    private static final int GAMES_NUMBER_PARAM = 3;
-    private static final int HOSTING_PARAM = 4;
-    private static final int PLAYERS_PARAM = 5;
+//    private static final int SERVER_IP_PARAM = 0;
+//    private static final int SERVER_PORT_PARAM = 1;
+//    private static final int DIFFICULTY_PARAM = 2;
+//    private static final int GAMES_NUMBER_PARAM = 3;
+//    private static final int HOSTING_PARAM = 4;
+//    private static final int PLAYERS_PARAM = 5;
+    
+    private static final int DIFFICULTY_PARAM = 0;
+    private static final int GAMES_NUMBER_PARAM = 1;
+    private static final int HOSTING_PARAM = 2;
+    private static final int PLAYERS_PARAM = 3;
     
     public static void main(String[] args) {
         AIRunner runner = new AIRunner();
@@ -41,8 +53,12 @@ public class AIRunner {
             if (runner.hosting) {
                 runner.setPlayers(Integer.valueOf(args[PLAYERS_PARAM]));
             }
+            Properties aiProperties = PropertiesProvider.lookupAndGet(PropertiesProvider.AI.FILE_NAME);
+            
             runner.setServerAddress(new InetSocketAddress(
-                    args[SERVER_IP_PARAM], Integer.valueOf(args[SERVER_PORT_PARAM])
+//                    aiProperties.getProperty(PropertiesProvider.AI.SERVER_IP),
+                    aiProperties.getProperty("server.ip"),
+                    Integer.valueOf(aiProperties.getProperty(PropertiesProvider.AI.SERVER_PORT))
             ));
             runner.setDifficulty(Difficulty.values()[Integer.valueOf(args[DIFFICULTY_PARAM])]);
             runner.setGames(Integer.valueOf(args[GAMES_NUMBER_PARAM]));

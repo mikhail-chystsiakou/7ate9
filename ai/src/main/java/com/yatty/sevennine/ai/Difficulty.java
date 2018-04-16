@@ -1,6 +1,7 @@
 package com.yatty.sevennine.ai;
 
 import java.util.Random;
+import java.util.UUID;
 
 public enum Difficulty {
     EASY (1000, 3000, "Petya", "Vanya", "Vasya"),
@@ -11,6 +12,7 @@ public enum Difficulty {
     protected long delayMin;
     protected long delayMax;
     private Random random;
+    private static final int ID_LENGTH = 4;
     
     Difficulty(long delayMin, long delayMax, String ... names) {
         this.names = names;
@@ -21,10 +23,14 @@ public enum Difficulty {
     
     public String getName() {
         int nameIndex = Math.abs(random.nextInt()) % names.length;
-        return names[nameIndex];
+        return names[nameIndex] + "-" + generateAIId();
     }
     
     public long getDelay() {
         return Math.abs(random.nextLong()) % (delayMax - delayMin) + delayMin;
+    }
+
+    private String generateAIId() {
+        return UUID.randomUUID().toString().substring(0, ID_LENGTH);
     }
 }

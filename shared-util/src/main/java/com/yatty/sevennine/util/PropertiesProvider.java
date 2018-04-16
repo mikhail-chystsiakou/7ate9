@@ -29,6 +29,12 @@ public class PropertiesProvider {
         String FILE_NAME = "game.properties";
         String STALEMATE_DELAY_MILLISECONDS = "stalemate_delay_milliseconds";
     }
+    
+    public interface AI {
+        String FILE_NAME = "ai.properties";
+        String SERVER_IP = "server.ip";
+        String SERVER_PORT = "server.port";
+    }
 
     public static Properties getEnvironmentProperties() throws IOException {
         return lookupAndGet(Environment.FILE_NAME);
@@ -46,7 +52,7 @@ public class PropertiesProvider {
      * @return  requested properties file
      * @throws IOException if IO error occurs
      */
-    private static Properties lookupAndGet(@Nonnull String fileName) throws IOException {
+    public static Properties lookupAndGet(@Nonnull String fileName) throws IOException {
         if (propertiesCache.containsKey(fileName)) {
             return propertiesCache.get(fileName);
         } else {

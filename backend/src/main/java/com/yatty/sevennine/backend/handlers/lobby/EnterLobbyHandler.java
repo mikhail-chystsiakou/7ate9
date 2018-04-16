@@ -37,8 +37,11 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
     
         LobbyStateChangedNotification newLobbyState =
                 new LobbyStateChangedNotification(lobby.getPrivateLobbyInfo());
+        logger.debug("Lobby size: {}", lobby.getPlayers().size());
         lobby.getPlayers().forEach(p -> {
+            logger.debug("Sending LobbyStateChangedNotification");
             if (!p.getLoginedUser().equals(user)) { // do not send update to update initiator
+                logger.debug("Sending LobbyStateChangedNotification seriously");
                 p.getLoginedUser().getChannel().writeAndFlush(newLobbyState);
             }
         });
@@ -56,8 +59,7 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
                 
                 p.getLoginedUser().getChannel().writeAndFlush(gameStartedNotification);
             });
-            
-            CardRotator.start(lobby);
+//            CardRotator.start(lobby);
         }
     }
 }

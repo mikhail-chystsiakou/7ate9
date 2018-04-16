@@ -21,6 +21,9 @@ public class UserRegistry {
      * @return          user auth token
      */
     public static String registerUser(String name) {
+        if (usersMap.containsKey(name)) {
+//            throw new
+        }
         LoginedUser player = new LoginedUser(name);
         usersMap.put(player.getAuthToken(), player);
         return player.getAuthToken();
