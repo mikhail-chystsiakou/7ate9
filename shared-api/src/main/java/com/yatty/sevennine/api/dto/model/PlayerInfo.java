@@ -8,6 +8,11 @@ public class PlayerInfo {
     
     }
     
+    public PlayerInfo(String playerId, int rating) {
+        this.playerId = playerId;
+        this.rating = rating;
+    }
+    
     public String getPlayerId() {
         return playerId;
     }

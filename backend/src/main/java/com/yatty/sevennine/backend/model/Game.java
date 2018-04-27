@@ -205,7 +205,10 @@ public class Game {
         PrivateLobbyInfo privateLobbyInfo = new PrivateLobbyInfo();
         privateLobbyInfo.setPlayers(players
                 .stream()
-                .map(p -> new PlayerInfo(p.getLoginedUser().getUser().getGeneratedLogin()))
+                .map(p -> new PlayerInfo(
+                        p.getLoginedUser().getUser().getGeneratedLogin(),
+                        p.getLoginedUser().getUser().getRating())
+                )
                 .collect(Collectors.toList())
         );
         return privateLobbyInfo;
