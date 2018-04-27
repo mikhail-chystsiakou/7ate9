@@ -1,4 +1,4 @@
-# 7ate9
+# 7ate9 [![Build Status](https://travis-ci.org/ZoXaL/7ate9-backend.svg?branch=master)](https://travis-ci.org/ZoXaL/7ate9-backend)
 
 В этом репозитории содержится:
 * Реализация серверной части игры 7ate9 (модуль backend)
