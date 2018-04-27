@@ -113,4 +113,15 @@
             <url>https://packagecloud.io/zoxal/7ate9</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>executable-jars</id>
+            <activation>
+                <property>
+                    <name>!env.ci_env</name>
+                </property>
+            </activation>
+        </profile>
+    </profiles>
 </project>
