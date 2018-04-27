@@ -14,7 +14,7 @@ deploy:
     repo: ZoXaL/7ate9-backend
     tags: true
 - provider: packagecloud
-  package_glob: **/*.jar
+  package_glob: "**/*.jar"
   token:
       secure: bSVcs5kwF19Cd6UTd/i2kZCleA4jftAgeNzBVCIpSyLzRRkQ/cU70OGNnQBzxan+igqvDwt7agciUQ/Jz4W09HccgT5UDbSrNmon9/eXBZUYPWTIlMh9FOPMA3S5jyXdhQ1QoR/ffgXYMvfGDVkfvFLpibZDKxlgivNEhQs3To0pDiV+COM/whiU/Wyeg2esyu9SlcW/8KIsMc1gnMzW4TdJGnghVCIBPtNwC7pyHZfT6XHLPCJxRKd+aX3B6ANXaHGcS7DLwDBcDQauFoN/JRazWoRPjqRZ+wMfovVfEG5a4RBIYXPQwiB45WyuBh/PWxy2naazBKPCr8iwnrDZWKGl07GBbd1mz+/mfrEX16t6uBee9JQO7FmBrGRWM7duXCkpm7Efg7mnjUFrPOskDlJRzp+HjVF4P80IxW1QqrN3dV9mqHxT9PiEI+B3jWNsZkiVq+sAJVUwTF9DdU0XqPHEBFxTE+fYfnxD3eEyfMHnXA6UnquE+CNBgWrMt5M4ydS7n6XhcD2kPxrxeGWOpgaWmQDhAM2ZWwfEc2wl695t/UD9R5SyTI5aZIkKGWcd02sv9Doe96LpzXUJCwdrCVy1uDFZepjkq0RDh8tlZDcUa9ysvnogpUMbgSUzB3YE6ur/CRSLg4pfuC6lWnrEYKPfE/KSHzsA/k/kghc2ReI=
   repository: 7ate9
