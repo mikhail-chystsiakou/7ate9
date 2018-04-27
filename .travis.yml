@@ -19,7 +19,6 @@ deploy:
   repository: 7ate9
   username: zoxal
   skip_cleanup: true
-  package_glob: *.jar
   on:
     repo: ZoXaL/7ate9-backend
     tags: true
