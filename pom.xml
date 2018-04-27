@@ -98,21 +98,10 @@
             <extension>
                 <groupId>io.packagecloud.maven.wagon</groupId>
                 <artifactId>maven-packagecloud-wagon</artifactId>
-                <version>0.0.4</version>
+                <version>0.0.6</version>
             </extension>
         </extensions>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>packagecloud-travis</id>
-            <url>https://packagecloud.io/zoxal/7ate9</url>
-        </repository>
-        <snapshotRepository>
-            <id>packagecloud-travis</id>
-            <url>https://packagecloud.io/zoxal/7ate9</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <profiles>
         <profile>
@@ -122,6 +111,24 @@
                     <name>!env.ci_env</name>
                 </property>
             </activation>
+        </profile>
+        <profile>
+            <id>packagecloud-deploy</id>
+            <activation>
+                <property>
+                    <name>env.ci_env</name>
+                </property>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>packagecloud-travis</id>
+                    <url>packagecloud+https://packagecloud.io/zoxal/7ate9</url>
+                </repository>
+                <snapshotRepository>
+                    <id>packagecloud-travis</id>
+                    <url>packagecloud+https://packagecloud.io/zoxal/7ate9</url>
+                </snapshotRepository>
+            </distributionManagement>
         </profile>
     </profiles>
 </project>
