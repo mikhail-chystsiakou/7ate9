@@ -121,11 +121,11 @@
             </activation>
             <distributionManagement>
                 <repository>
-                    <id>packagecloud-travis</id>
+                    <id>packagecloud</id>
                     <url>packagecloud+https://packagecloud.io/zoxal/7ate9</url>
                 </repository>
                 <snapshotRepository>
-                    <id>packagecloud-travis</id>
+                    <id>packagecloud</id>
                     <url>packagecloud+https://packagecloud.io/zoxal/7ate9</url>
                 </snapshotRepository>
             </distributionManagement>
