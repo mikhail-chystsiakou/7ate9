@@ -1,24 +1,24 @@
 language: java
 deploy:
-  - provider: releases
-    api_key:
-      secure: cV3NY20yAYhzk5cFT33/zTW89NN15rc13Sf6wWaEXJ6FFOh1vvUS5Ny9Njsqv9i7/G1JVCfwr1w/NrQ1y510n5Hmy39EUR8HfAet6LHRrfN7vIAQ+v8ENZ/FRtyB0o9/ksnc+NznTQvokHWSYQ7H9eGRn/lLWodI2eUStfVUv223fRJjAsEq/MlvZMOhikBhRn8LnU7aJa+/9W95oCc8cxnZbykRLoro1Cu7cXmIfFtQYrXQ9AUXrNjCbx5fz2J4kDrnYgf2tIOb8j+75Xcylujy5pw9P9vkM8TeyWM0ManJK44C9NY6K4lADzVu9Q/BDgM8MeWCbqnZBgzlSU7YIfFDnU8gbNIKxiiJWmyJGAqnz23MayRFOWdrgv7gDnk+DDS70AKI3iZu3x0y3glD+QuOaV2mdrNUzzwbEkkxa9l1JDSbcrhrUD+wrjJOa/2j6uxdeqJABrz6JM1Ads2WPVCNdYpILWYYcZG5mhpKRjQXCgNi5BKYmgqnklLxrzfZzs1D1uwTJX8zQh8IUNUkiY2yD0Kp+TvSNJBIY9wtV7GpKEaiLBMWFh8LSiXTptzgo0m3XhJ0v26ZcHU/juzF3LBKsGkYvIxu4U+AP7+7CpYU9b6JX3NLIxKHm0teDdqxAniYfgt52LbQH7dzVtUkeZmybcoJMWVRtqqp/87FV6E=
-    file_glob: true
-    file:
-      - "/home/travis/build/ZoXaL/7ate9-backend/backend/target/backend*.jar"
-      - "/home/travis/build/ZoXaL/7ate9-backend/ai/target/ai*.jar"
-      - "/home/travis/build/ZoXaL/7ate9-backend/client/target/client*.jar"
-    overwrite: true
-    skip_cleanup: true
-    on:
-      repo: ZoXaL/7ate9-backend
-      tags: true
-  - provider: packagecloud
-    api_key:
-      secure: "zSQrKX3pvTlkDoCoGj9cpAhc46fMHL0THtEdrfYmUvetbnZWtG1fpP0D7stK65L3oLRFJGjPgdqbHCoMXU8MHDxYFYm/EMhPFjnE/5cMQXAlWNqrmvRHJXyqPxDG90VKBN97hVjuQzTC/CU+zm++yUtW+bEpLR3nlkcDkxPKEA4vPlC49gyo62i8YsgSXYEneD2mND9+RATEgko0DU0/C/09LzRFdGoJ74iqtVLjOzvJu5HrLQejp9I6qkbqDrmtiBThoNOjV3/g/lVNfvgH6pQ7JaVM5SVdjQaBwW24IgaOS9WBOEU3O4SOZMR6Ja7ryG8OC7ZO43PFqpM7iOejS9zGVnoYcpNtL+09lnkiRcvAFJyV/k6HHEkAzBD55smYrVoo8CkhHm+iwyEjhnX8IazgBSczmXYnR7+uW2mbJmsLbR2CQKPPMkVF5JYeer+f6U0zhr4cjzTiRyMhuSsyGQTb00ElJIrsqechESI+0z5YjX5zneJfh/j6hG7h+JOLa7QduwNg1oCQCnIjjZeh4dFbWaOxFzb/mM0+giomHKJaOfTGcZJA3GeE9FaWbHfJCPHWIvwyQcts7rCefE9oPv9g1zrQQNVgoh7srd9xflPPER+Fxe735PvFTaUYMTL9DCWUrjzEGPaX26twdlBwQDRdEh/shLa/lpbhuk2nqxY="
-    repository: 7ate9
-    username: zoxal
-    skip_cleanup: true
-    on:
-      repo: ZoXaL/7ate9-backend
-      tags: true
+- provider: releases
+  api_key:
+    secure: cV3NY20yAYhzk5cFT33/zTW89NN15rc13Sf6wWaEXJ6FFOh1vvUS5Ny9Njsqv9i7/G1JVCfwr1w/NrQ1y510n5Hmy39EUR8HfAet6LHRrfN7vIAQ+v8ENZ/FRtyB0o9/ksnc+NznTQvokHWSYQ7H9eGRn/lLWodI2eUStfVUv223fRJjAsEq/MlvZMOhikBhRn8LnU7aJa+/9W95oCc8cxnZbykRLoro1Cu7cXmIfFtQYrXQ9AUXrNjCbx5fz2J4kDrnYgf2tIOb8j+75Xcylujy5pw9P9vkM8TeyWM0ManJK44C9NY6K4lADzVu9Q/BDgM8MeWCbqnZBgzlSU7YIfFDnU8gbNIKxiiJWmyJGAqnz23MayRFOWdrgv7gDnk+DDS70AKI3iZu3x0y3glD+QuOaV2mdrNUzzwbEkkxa9l1JDSbcrhrUD+wrjJOa/2j6uxdeqJABrz6JM1Ads2WPVCNdYpILWYYcZG5mhpKRjQXCgNi5BKYmgqnklLxrzfZzs1D1uwTJX8zQh8IUNUkiY2yD0Kp+TvSNJBIY9wtV7GpKEaiLBMWFh8LSiXTptzgo0m3XhJ0v26ZcHU/juzF3LBKsGkYvIxu4U+AP7+7CpYU9b6JX3NLIxKHm0teDdqxAniYfgt52LbQH7dzVtUkeZmybcoJMWVRtqqp/87FV6E=
+  file_glob: true
+  file:
+  - "/home/travis/build/ZoXaL/7ate9-backend/backend/target/backend*.jar"
+  - "/home/travis/build/ZoXaL/7ate9-backend/ai/target/ai*.jar"
+  - "/home/travis/build/ZoXaL/7ate9-backend/client/target/client*.jar"
+  overwrite: true
+  skip_cleanup: true
+  on:
+    repo: ZoXaL/7ate9-backend
+    tags: true
+- provider: packagecloud
+  token:
+      secure: bSVcs5kwF19Cd6UTd/i2kZCleA4jftAgeNzBVCIpSyLzRRkQ/cU70OGNnQBzxan+igqvDwt7agciUQ/Jz4W09HccgT5UDbSrNmon9/eXBZUYPWTIlMh9FOPMA3S5jyXdhQ1QoR/ffgXYMvfGDVkfvFLpibZDKxlgivNEhQs3To0pDiV+COM/whiU/Wyeg2esyu9SlcW/8KIsMc1gnMzW4TdJGnghVCIBPtNwC7pyHZfT6XHLPCJxRKd+aX3B6ANXaHGcS7DLwDBcDQauFoN/JRazWoRPjqRZ+wMfovVfEG5a4RBIYXPQwiB45WyuBh/PWxy2naazBKPCr8iwnrDZWKGl07GBbd1mz+/mfrEX16t6uBee9JQO7FmBrGRWM7duXCkpm7Efg7mnjUFrPOskDlJRzp+HjVF4P80IxW1QqrN3dV9mqHxT9PiEI+B3jWNsZkiVq+sAJVUwTF9DdU0XqPHEBFxTE+fYfnxD3eEyfMHnXA6UnquE+CNBgWrMt5M4ydS7n6XhcD2kPxrxeGWOpgaWmQDhAM2ZWwfEc2wl695t/UD9R5SyTI5aZIkKGWcd02sv9Doe96LpzXUJCwdrCVy1uDFZepjkq0RDh8tlZDcUa9ysvnogpUMbgSUzB3YE6ur/CRSLg4pfuC6lWnrEYKPfE/KSHzsA/k/kghc2ReI=
+  repository: 7ate9
+  username: zoxal
+  skip_cleanup: true
+  on:
+    repo: ZoXaL/7ate9-backend
+    tags: true
