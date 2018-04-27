@@ -41,7 +41,6 @@ public class TCPAliveClientStub extends Application implements Initializable {
     private static SynchronousClient client;
     private JsonMessageEncoder encoder = new JsonMessageEncoder();
     private JsonMessageDecoder decoder = new JsonMessageDecoder();
-
     
     private ObjectWriter objectWriter = new ObjectMapper()
             .writerWithDefaultPrettyPrinter();
