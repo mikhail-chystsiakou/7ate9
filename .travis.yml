@@ -1,0 +1,19 @@
+sudo: false
+language: java
+#cache:
+#  directories:
+#  - "$HOME/.cache"
+#deploy:
+#  provider: releases
+#  api_key: "GITHUB OAUTH TOKEN"
+#  file: "FILE TO UPLOAD"
+#  skip_cleanup: true
+#  on:
+#    tags: true
+
+#notifications:
+#  email:
+#    recipients:
+#    - julio@packagecloud.io
+#    on_success: change
+#    on_failure: always
