@@ -11,6 +11,7 @@
 
     <artifactId>shared-util</artifactId>
 
+
     <dependencies>
         <dependency>
             <groupId>io.netty</groupId>
