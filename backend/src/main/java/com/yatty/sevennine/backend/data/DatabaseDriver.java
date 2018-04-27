@@ -83,7 +83,6 @@ public class DatabaseDriver {
             } else {
                 throw new DatabaseException("Failed to create user '" + login + "'");
             }
-            
         } catch (SQLException e) {
             throw new DatabaseException("Failed to create user '" + login + "'", e);
         }
