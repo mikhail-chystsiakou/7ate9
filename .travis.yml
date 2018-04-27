@@ -4,7 +4,10 @@ deploy:
   api_key:
     secure: cV3NY20yAYhzk5cFT33/zTW89NN15rc13Sf6wWaEXJ6FFOh1vvUS5Ny9Njsqv9i7/G1JVCfwr1w/NrQ1y510n5Hmy39EUR8HfAet6LHRrfN7vIAQ+v8ENZ/FRtyB0o9/ksnc+NznTQvokHWSYQ7H9eGRn/lLWodI2eUStfVUv223fRJjAsEq/MlvZMOhikBhRn8LnU7aJa+/9W95oCc8cxnZbykRLoro1Cu7cXmIfFtQYrXQ9AUXrNjCbx5fz2J4kDrnYgf2tIOb8j+75Xcylujy5pw9P9vkM8TeyWM0ManJK44C9NY6K4lADzVu9Q/BDgM8MeWCbqnZBgzlSU7YIfFDnU8gbNIKxiiJWmyJGAqnz23MayRFOWdrgv7gDnk+DDS70AKI3iZu3x0y3glD+QuOaV2mdrNUzzwbEkkxa9l1JDSbcrhrUD+wrjJOa/2j6uxdeqJABrz6JM1Ads2WPVCNdYpILWYYcZG5mhpKRjQXCgNi5BKYmgqnklLxrzfZzs1D1uwTJX8zQh8IUNUkiY2yD0Kp+TvSNJBIY9wtV7GpKEaiLBMWFh8LSiXTptzgo0m3XhJ0v26ZcHU/juzF3LBKsGkYvIxu4U+AP7+7CpYU9b6JX3NLIxKHm0teDdqxAniYfgt52LbQH7dzVtUkeZmybcoJMWVRtqqp/87FV6E=
   file_glob: true
-  file: "/home/travis/build/ZoXaL/7ate9-backend/backend/target/backend-4.0.jar"
+  file:
+    - "/home/travis/build/ZoXaL/7ate9-backend/backend/target/backend*.jar"
+    - "/home/travis/build/ZoXaL/7ate9-backend/ai/target/ai*.jar"
+    - "/home/travis/build/ZoXaL/7ate9-backend/client/target/client*.jar"
   overwrite: true
   skip_cleanup: true
   on:
