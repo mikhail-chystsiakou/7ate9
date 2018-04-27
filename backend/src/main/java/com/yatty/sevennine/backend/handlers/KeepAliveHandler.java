@@ -28,10 +28,10 @@ public class KeepAliveHandler extends SimpleChannelInboundHandler<KeepAliveReque
     
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, KeepAliveRequest msg) throws Exception {
-        LoginedUser user = UserRegistry.getUserByToken(msg.getAuthToken());
+        LoginedUser user = UserRegistry.getLoginedUser(msg.getAuthToken());
     
         if (user != null) {
-            logger.debug("Got keepalive request from user '{}'", user.getName());
+            logger.debug("Got keepalive request from user '{}'", user.getUser().getGeneratedLogin());
             user.setChannel(ctx.channel());
         } else {
             throw new UnauthorizedAccessException(msg.getAuthToken());

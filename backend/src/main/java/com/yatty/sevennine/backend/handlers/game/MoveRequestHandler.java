@@ -56,7 +56,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
         Game game = GameRegistry.getGameById(msg.getGameId());
         
-        logger.debug("Accepting move {} from '{}'", msg.getMove(), user.getName());
+        logger.debug("Accepting move {} from '{}'", msg.getMove(), user.getUser().getGeneratedLogin());
         if (game.acceptMove(msg.getMove(), user)) {
             processRightMove(game, user, msg);
         } else {
@@ -67,7 +67,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
     private void processRightMove(Game game, LoginedUser moveAuthor,
                                   MoveRequest moveRequestMsg) {
         NewStateNotification newStateNotification = new NewStateNotification();
-        newStateNotification.setMoveWinner(moveAuthor.getName());
+        newStateNotification.setMoveWinner(moveAuthor.getUser().getGeneratedLogin());
         newStateNotification.setMoveNumber(game.getMoveNumber());
         
         if (game.isFinished()) {
@@ -75,7 +75,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             
             GameResult gameResult = new GameResult();
             if (game.getWinner() != null) {
-                gameResult.setWinner(game.getWinner().getLoginedUser().getName());
+                gameResult.setWinner(game.getWinner().getLoginedUser().getUser().getGeneratedLogin());
             }
             game.getPlayers().forEach(p -> gameResult.addScore(p.getResult()));
             
@@ -114,7 +114,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         MoveRejectedResponse response = new MoveRejectedResponse();
         response.setMove(moveRequestMsg.getMove());
 
-        logger.debug("Move {} rejected for '{}'", moveRequestMsg.getMove(), moveAuthor.getName());
+        logger.debug("Move {} rejected for '{}'", moveRequestMsg.getMove(), moveAuthor.getUser().getGeneratedLogin());
         moveAuthor.getChannel().writeAndFlush(response);
     }
 }

@@ -1,21 +1,26 @@
 package com.yatty.sevennine.api.dto.model;
 
 public class PlayerInfo {
-    private String name;
+    private String playerId;
+    private int rating;
     
     public PlayerInfo() {
     
     }
     
-    public PlayerInfo(String name) {
-        this.name = name;
+    public String getPlayerId() {
+        return playerId;
     }
     
-    public String getName() {
-        return name;
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public int getRating() {
+        return rating;
+    }
+    
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

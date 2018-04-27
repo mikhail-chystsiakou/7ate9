@@ -16,7 +16,7 @@ public class LobbyUnsubscribeHandler extends SimpleChannelInboundHandler<LobbyLi
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LobbyListUnsubscribeRequest msg) throws Exception {
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
-        logger.debug("Player '{}' is unsubscribing for updates", user.getName());
+        logger.debug("Player '{}' is unsubscribing for updates", user.getUser().getGeneratedLogin());
         UserRegistry.removeSubscriber(msg.getAuthToken());
     }
 }

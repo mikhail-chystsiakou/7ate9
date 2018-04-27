@@ -205,7 +205,7 @@ public class Game {
         PrivateLobbyInfo privateLobbyInfo = new PrivateLobbyInfo();
         privateLobbyInfo.setPlayers(players
                 .stream()
-                .map(p -> new PlayerInfo(p.getLoginedUser().getName()))
+                .map(p -> new PlayerInfo(p.getLoginedUser().getUser().getGeneratedLogin()))
                 .collect(Collectors.toList())
         );
         return privateLobbyInfo;
@@ -259,7 +259,7 @@ public class Game {
         
         public PlayerResult getResult() {
             PlayerResult playerResult = new PlayerResult();
-            playerResult.setPlayerName(loginedUser.getName());
+            playerResult.setPlayerName(loginedUser.getUser().getGeneratedLogin());
             playerResult.setCardsLeft(cards.size());
             return playerResult;
         }

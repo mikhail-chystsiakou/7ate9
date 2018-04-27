@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LogInResponse {
     private String authToken;
-    private String description;
+    private String playerId;
+    private int rating;
     
     public String getAuthToken() {
         return authToken;
@@ -15,11 +16,19 @@ public class LogInResponse {
         this.authToken = authToken;
     }
     
-    public String getDescription() {
-        return description;
+    public String getPlayerId() {
+        return playerId;
     }
     
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
+    
+    public int getRating() {
+        return rating;
+    }
+    
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

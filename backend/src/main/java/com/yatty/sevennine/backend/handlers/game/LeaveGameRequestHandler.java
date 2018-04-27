@@ -28,18 +28,18 @@ public class LeaveGameRequestHandler extends SimpleChannelInboundHandler<LeaveGa
         // TODO: send notification to other players
         
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
-        logger.debug("Got game leave request: {}", user.getName());
+        logger.debug("Got game leave request: {}", user.getUser().getGeneratedLogin());
         Game game = GameRegistry.getGameById(msg.getGameId());
         game.removePlayer(user);
         if (game.isFinished()) {
             if (game.getWinner() != null) {
                 NewStateNotification newStateNotification = new NewStateNotification();
-                newStateNotification.setMoveWinner(game.getWinner().getLoginedUser().getName());
+                newStateNotification.setMoveWinner(game.getWinner().getLoginedUser().getUser().getGeneratedLogin());
                 newStateNotification.setMoveNumber(game.getMoveNumber());
                 newStateNotification.setLastMove(true);
     
                 GameResult gameResult = new GameResult();
-                gameResult.setWinner(game.getWinner().getLoginedUser().getName());
+                gameResult.setWinner(game.getWinner().getLoginedUser().getUser().getGeneratedLogin());
                 game.getPlayers().forEach(p -> gameResult.addScore(p.getResult()));
                 newStateNotification.setGameResult(gameResult);
     

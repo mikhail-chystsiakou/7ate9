@@ -35,6 +35,14 @@ public class PropertiesProvider {
         String SERVER_IP = "server.ip";
         String SERVER_PORT = "server.port";
     }
+    
+    public interface DB {
+        String FILE_NAME = "db.properties";
+        String LOCATION = "db.location";
+        String NAME = "db.name";
+        String LOGIN = "db.login";
+        String PASSWORD = "db.password";
+    }
 
     public static Properties getEnvironmentProperties() throws IOException {
         return lookupAndGet(Environment.FILE_NAME);
@@ -42,6 +50,10 @@ public class PropertiesProvider {
     
     public static Properties getGameProperties() throws IOException {
         return lookupAndGet(Game.FILE_NAME);
+    }
+    
+    public static Properties getDBProperties() throws IOException {
+        return lookupAndGet(DB.FILE_NAME);
     }
     
     /**

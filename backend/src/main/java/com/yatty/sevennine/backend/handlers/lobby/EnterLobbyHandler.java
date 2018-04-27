@@ -21,7 +21,7 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
     protected void channelRead0(ChannelHandlerContext ctx, EnterLobbyRequest msg) throws Exception {
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
         logger.debug("Player '{}' is entering lobby '{}'",
-                user.getName(), msg.getLobbyId()
+                user.getUser().getGeneratedLogin(), msg.getLobbyId()
         );
     
         Game lobby = GameRegistry.getLobbyById(msg.getLobbyId());

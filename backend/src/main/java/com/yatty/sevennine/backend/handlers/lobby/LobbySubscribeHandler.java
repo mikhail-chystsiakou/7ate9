@@ -18,7 +18,7 @@ public class LobbySubscribeHandler extends SimpleChannelInboundHandler<LobbyList
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LobbyListSubscribeRequest msg) throws Exception {
         LoginedUser user = UserRegistry.checkAndGetLoginedUser(msg.getAuthToken());
-        logger.debug("Player '{}' is subscribing for updates", user.getName());
+        logger.debug("Player '{}' is subscribing for updates", user.getUser().getGeneratedLogin());
     
         UserRegistry.addSubscriber(msg.getAuthToken());
         user.setChannel(ctx.channel());

@@ -1,45 +1,58 @@
 package com.yatty.sevennine.backend.model;
 
-import com.yatty.sevennine.backend.exceptions.logic.PlayerNotFoundException;
+import com.yatty.sevennine.backend.data.DatabaseDriver;
+import com.yatty.sevennine.backend.exceptions.security.LogInException;
 import com.yatty.sevennine.backend.exceptions.security.UnauthorizedAccessException;
 import io.netty.util.internal.ConcurrentSet;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserRegistry {
     private static final Map<String, LoginedUser> usersMap = new ConcurrentHashMap<>();
     private static final Set<LoginedUser> subscribers = new ConcurrentSet<>();
+    private static final DatabaseDriver databaseDriver = new DatabaseDriver();
     
     /**
-     * Registers player in game
+     * If there is user with specified credentials, fetches information
+     * about it. If there was no such user, creates new one.
      *
-     * @param name      player name
-     * @return          user auth token
+     * @param login             user's login
+     * @param passwordHash      user's password hash
+     * @return                  logined user with auth token
+     * @throws LogInException   on login-key pair mismatch
      */
-    public static String registerUser(String name) {
-        if (usersMap.containsKey(name)) {
-//            throw new
+    public static LoginedUser authUser(@Nonnull String login, @Nonnull String passwordHash) throws LogInException {
+        LoginedUser loginedUser = new LoginedUser();
+        
+        User user = databaseDriver.findUser(passwordHash);
+        if (user == null) {
+            loginedUser.setUser(databaseDriver.createUser(login, passwordHash));
+        } else {
+            if (!login.equals(user.getLogin())) throw new LogInException(login);
+            loginedUser.setUser(user);
         }
-        LoginedUser player = new LoginedUser(name);
-        usersMap.put(player.getAuthToken(), player);
-        return player.getAuthToken();
+        loginedUser.setAuthToken(UUID.randomUUID().toString());
+        usersMap.put(loginedUser.getAuthToken(), loginedUser);
+        return loginedUser;
     }
     
     @Nullable
-    public static LoginedUser getUserByToken(String authToken) {
+    public static LoginedUser getLoginedUser(String authToken) {
         return usersMap.get(authToken);
     }
     
-    public static void removeUserByToken(String authToken) {
+    public static void removeLoginedUser(String authToken) {
         usersMap.remove(authToken);
     }
     
     /**
-     * Checks if user is authorized. Th
+     * Checks if user is authorized and return logined user on success
      *
      * @param authToken user auth token to check
      * @throws UnauthorizedAccessException  if user is not registered
@@ -56,7 +69,7 @@ public class UserRegistry {
         if (usersMap.containsKey(authToken)) {
             subscribers.add(usersMap.get(authToken));
         } else {
-            throw new PlayerNotFoundException(authToken);
+            throw new UnauthorizedAccessException(authToken);
         }
     }
     
@@ -64,7 +77,7 @@ public class UserRegistry {
         if (usersMap.containsKey(authToken)) {
             subscribers.remove(usersMap.get(authToken));
         } else {
-            throw new PlayerNotFoundException(authToken);
+            throw new UnauthorizedAccessException(authToken);
         }
     }
     
