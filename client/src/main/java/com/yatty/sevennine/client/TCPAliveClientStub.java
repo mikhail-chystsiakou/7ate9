@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,7 +123,7 @@ public class TCPAliveClientStub extends Application implements Initializable {
     @FXML
     public void setLoginTemplate() throws Exception {
         responseExpected = true;
-        inputArea.setText(encoder.apply(new LogInRequest("Mike")));
+        inputArea.setText(encoder.apply(new LogInRequest("Mike", UUID.randomUUID().toString())));
     }
     
     @FXML

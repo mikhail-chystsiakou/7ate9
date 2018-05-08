@@ -1,5 +1,6 @@
 package com.yatty.sevennine.backend;
 
+import com.yatty.sevennine.backend.data.DatabaseDriver;
 import com.yatty.sevennine.backend.handlers.*;
 import com.yatty.sevennine.backend.handlers.auth.LogInHandler;
 import com.yatty.sevennine.backend.handlers.auth.LogOutHandler;
@@ -55,6 +56,7 @@ public class TCPServer {
         } finally {
             connectionEventGroup.shutdownGracefully();
             dataEventGroup.shutdownGracefully();
+            DatabaseDriver.close();
         }
     }
     

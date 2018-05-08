@@ -4,12 +4,8 @@ import com.yatty.sevennine.api.GameResult;
 import com.yatty.sevennine.api.dto.game.MoveRejectedResponse;
 import com.yatty.sevennine.api.dto.game.MoveRequest;
 import com.yatty.sevennine.api.dto.game.NewStateNotification;
-import com.yatty.sevennine.backend.exceptions.security.GameAccessException;
-import com.yatty.sevennine.backend.model.Game;
-import com.yatty.sevennine.backend.model.GameRegistry;
-import com.yatty.sevennine.backend.model.LoginedUser;
-import com.yatty.sevennine.backend.model.UserRegistry;
-import com.yatty.sevennine.backend.util.CardRotator;
+import com.yatty.sevennine.backend.data.DatabaseDriver;
+import com.yatty.sevennine.backend.model.*;
 import com.yatty.sevennine.util.PropertiesProvider;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -40,6 +37,7 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
     private static ScheduledExecutorService stalemateService =
             Executors.newScheduledThreadPool(1);
     private static long stalemateDelay;
+    private static Map<String, Semaphore> messageSemaphoreMap = new ConcurrentHashMap<>();
     
     static {
         try {
@@ -57,18 +55,33 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         Game game = GameRegistry.getGameById(msg.getGameId());
         
         logger.debug("Accepting move {} from '{}'", msg.getMove(), user.getUser().getGeneratedLogin());
+        Semaphore gameMessagesSemaphore;
+        if (messageSemaphoreMap.containsKey(game.getId())) {
+            gameMessagesSemaphore = messageSemaphoreMap.get(game.getId());
+        } else {
+            gameMessagesSemaphore = new Semaphore(1);
+            messageSemaphoreMap.put(game.getId(), gameMessagesSemaphore);
+        }
+        gameMessagesSemaphore.acquire();
         if (game.acceptMove(msg.getMove(), user)) {
             processRightMove(game, user, msg);
         } else {
             processWrongMove(user, msg);
         }
+        gameMessagesSemaphore.release();
     }
 
     private void processRightMove(Game game, LoginedUser moveAuthor,
-                                  MoveRequest moveRequestMsg) {
+                                  MoveRequest moveRequestMsg) throws InterruptedException {
         NewStateNotification newStateNotification = new NewStateNotification();
         newStateNotification.setMoveWinner(moveAuthor.getUser().getGeneratedLogin());
         newStateNotification.setMoveNumber(game.getMoveNumber());
+        
+        if (logger.isTraceEnabled()) {
+            game.getCurrentPlayers().forEach(p -> {
+                logger.trace("Player: {}, Cards left: {}", p.getLoginedUser().getAuthToken(), p.getCards());
+            });
+        }
         
         if (game.isFinished()) {
             newStateNotification.setLastMove(true);
@@ -77,7 +90,9 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             if (game.getWinner() != null) {
                 gameResult.setWinner(game.getWinner().getLoginedUser().getUser().getGeneratedLogin());
             }
-            game.getPlayers().forEach(p -> gameResult.addScore(p.getResult()));
+            game.getCurrentPlayers().forEach(p -> gameResult.addScore(p.getResult()));
+            EloRating.updateUsersRatings(game.getRegisteredPlayers(), moveAuthor);
+            game.getRegisteredPlayers().forEach(u -> DatabaseDriver.updateUserRating(u.getUser()));
             
             newStateNotification.setGameResult(gameResult);
 
@@ -87,27 +102,24 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
             newStateNotification.setNextCard(moveRequestMsg.getMove());
 //            CardRotator.refresh(game.getId());
         }
-        if (logger.isTraceEnabled()) {
-            game.getPlayers().forEach(p -> {
-                logger.trace("Player: {}, Cards left: {}", p.getLoginedUser().getAuthToken(), p.getCards());
-            });
-        }
         
         if (!game.isFinished() && game.isStalemate()) {
+            messageSemaphoreMap.remove(game.getId());
             newStateNotification.setStalemate(true);
     
-            logger.trace("Stalemate detected!");
+            logger.debug("Stalemate detected!");
             stalemateService.schedule(() -> {
                 game.fixStalemate();
                 logger.debug("Stalemate set new card: {}", game.getTopCard());
                 NewStateNotification stalemateCardNotification = new NewStateNotification();
                 stalemateCardNotification.setStalemate(false);
                 stalemateCardNotification.setNextCard(game.getTopCard());
-                game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(stalemateCardNotification));
+                newStateNotification.setMoveNumber(game.getMoveNumber());
+                game.getCurrentLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(stalemateCardNotification));
             }, stalemateDelay, TimeUnit.MILLISECONDS);
         }
-        
-        game.getLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));
+    
+        game.getCurrentLoginedUsers().forEach(u -> u.getChannel().writeAndFlush(newStateNotification));
     }
 
     private void processWrongMove(LoginedUser moveAuthor, MoveRequest moveRequestMsg) {

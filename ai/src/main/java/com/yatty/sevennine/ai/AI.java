@@ -14,9 +14,13 @@ import com.yatty.sevennine.client.SynchronousClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public class AI {
     private static final Logger logger = LoggerFactory.getLogger(AI.class);
@@ -25,6 +29,7 @@ public class AI {
     protected Difficulty difficulty;
     protected int games;
     protected String name;
+    protected String playerId;
     
     protected volatile String authToken;
     
@@ -64,10 +69,18 @@ public class AI {
     }
     
     protected void login() {
-        LogInRequest request = new LogInRequest(name);
-        LogInResponse response = client.sendMessage(request, LogInResponse.class, false);
-        authToken = response.getAuthToken();
-        logger.debug("Logged in as {}: {}", name, authToken);
+        try {
+            String passwordHash = new String(
+                    MessageDigest.getInstance("SHA-256").digest(UUID.randomUUID().toString().getBytes())
+            );
+            LogInRequest request = new LogInRequest(name, passwordHash);
+            LogInResponse response = client.sendMessage(request, LogInResponse.class, false);
+            authToken = response.getAuthToken();
+            playerId = response.getPlayerId();
+            logger.debug("Logged in as {} ({}): {}", playerId, passwordHash, authToken);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
     
     protected void enterLobby() {
@@ -195,7 +208,7 @@ public class AI {
                 topCard = m.getNextCard();
                 logger.debug("New top card: {}", m.getNextCard());
                 gameUpdated = true;
-                if (name.equals(m.getMoveWinner())
+                if (playerId.equals(m.getMoveWinner())
                         && m.getNextCard() != null
                         && m.getNextCard().equals(lastMove)) {
                     cards.remove(m.getNextCard());

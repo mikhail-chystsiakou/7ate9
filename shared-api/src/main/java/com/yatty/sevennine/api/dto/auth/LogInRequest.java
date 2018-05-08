@@ -11,8 +11,9 @@ public class LogInRequest {
     
     }
     
-    public LogInRequest(String name) {
+    public LogInRequest(String name, String passwordHash) {
         this.name = name;
+        this.passwordHash = passwordHash;
     }
     
     public String getName() {

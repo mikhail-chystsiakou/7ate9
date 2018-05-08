@@ -37,7 +37,6 @@ public class JsonMessageDecoder extends MessageToMessageDecoder<ByteBuf> impleme
         logger.debug("Decoding '{}'", data);
         try {
             Object v = decode(data, objectMapper);
-            logger.debug("Decoded: {}", v);
             out.add(v);
         } catch (Exception e) {
             throw new DecoderException("Failed to decode '" + data + "'", e);

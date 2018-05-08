@@ -29,7 +29,7 @@ public class CreateLobbyHandler extends SimpleChannelInboundHandler<CreateLobbyR
                 msg.getLobbyName(),
                 msg.getMaxPlayersNumber()
         );
-        newLobby.addPlayer(user);
+        newLobby.register(user);
         user.setChannel(ctx.channel());
         GameRegistry.registerLobby(newLobby);
         

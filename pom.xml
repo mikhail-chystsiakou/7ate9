@@ -107,9 +107,10 @@
         <profile>
             <id>executable-jars</id>
             <activation>
-                <property>
-                    <name>!env.ci_env</name>
-                </property>
+                <activeByDefault>true</activeByDefault>
+                <!--<property>-->
+                    <!--<name>!env.ci_env</name>-->
+                <!--</property>-->
             </activation>
         </profile>
         <profile>

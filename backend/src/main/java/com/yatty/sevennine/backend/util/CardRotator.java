@@ -65,7 +65,7 @@ public class CardRotator {
                         NewStateNotification newStateNotification = new NewStateNotification();
                         newStateNotification.setNextCard(Card.getRandomCard());
                         game.setTopCard(newStateNotification.getNextCard());
-                        game.getLoginedUsers().forEach(u -> {
+                        game.getCurrentLoginedUsers().forEach(u -> {
                             u.getChannel().writeAndFlush(newStateNotification);
                         });
                         lastRefreshed.set(System.currentTimeMillis());

@@ -9,6 +9,7 @@ import com.yatty.sevennine.backend.exceptions.logic.FullLobbyException;
 import com.yatty.sevennine.backend.exceptions.security.GameAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.rmi.runtime.Log;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,12 +29,14 @@ public class Game {
     private String id;
     private String name;
     
-    private List<Player> players;
+    private List<Player> currentPlayers = new ArrayList<>(MAX_PLAYERS_NUM);
+    private List<LoginedUser> registeredPlayers = new ArrayList<>(MAX_PLAYERS_NUM);
     private int expectedPlayersNum;
     private Player winner;
     
     private Card topCard;
     private int moveNumber;
+    private boolean started;
     
     private Deck deck;
 
@@ -41,7 +44,6 @@ public class Game {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.expectedPlayersNum = expectedPlayersNum;
-        this.players = new ArrayList<>(MAX_PLAYERS_NUM);
     }
 
     /**
@@ -49,33 +51,49 @@ public class Game {
      *
      * @param   user                user that wants to join the game
      */
-    public void addPlayer(LoginedUser user) {
-        if (players.size() >= expectedPlayersNum) throw new FullLobbyException(this);
-        Player player = new Player(user);
-        players.add(player);
+    public void register(LoginedUser user) {
+        if (started) throw new IllegalStateException("Game already started");
+        if (registeredPlayers.size() >= expectedPlayersNum) throw new FullLobbyException(this);
+        registeredPlayers.add(user);
     }
     
-    public void removePlayer(LoginedUser user) {
+    public void unregisterPlayer(LoginedUser user) {
+        if (started) throw new IllegalStateException("Game already started");
         checkUserJoined(user);
-        for (Player p : players) {
-            if (p.getLoginedUser().equals(user)) {
-                players.remove(p);
+        for (LoginedUser u: registeredPlayers) {
+            if (u.equals(user)) {
+                currentPlayers.remove(u);
             }
         }
-        if (players.size() == 1) {
-            winner = players.get(0);
+    }
+    
+    public void playerLeave(LoginedUser user) {
+        checkUserJoined(user);
+        for (Player p : currentPlayers) {
+            if (p.getLoginedUser().equals(user)) {
+                currentPlayers.remove(p);
+            }
         }
+        if (currentPlayers.size() == 1) {
+            winner = currentPlayers.get(0);
+        }
+    }
+    
+    public void start() {
+        started = true;
+        for (LoginedUser u : registeredPlayers) currentPlayers.add(new Player(u));
+        giveOutCards();
     }
     
     /**
      * Initializes player cards and top card
      */
-    public void giveOutCards() {
+    private void giveOutCards() {
         if (deck == null) {
             deck = new SevenAteNineDeck(expectedPlayersNum, false);
         }
         topCard = deck.pullStartCard();
-        players.forEach(p -> p.setCards(deck.pullCards()));
+        currentPlayers.forEach(p -> p.setCards(deck.pullCards()));
     }
     
     /**
@@ -96,7 +114,7 @@ public class Game {
             return false;
         }
 
-        Player moveWinner = players.stream()
+        Player moveWinner = currentPlayers.stream()
                 .filter(p -> moveAuthor.equals(p.getLoginedUser()))
                 .findFirst()
                 .orElseThrow(() -> new GameAccessException(moveAuthor, this));
@@ -116,11 +134,11 @@ public class Game {
     }
     
     /**
-     * @return  unmodifiable view of game players as logined users
+     * @return  unmodifiable view of game currentPlayers as logined users
      */
-    public List<LoginedUser> getLoginedUsers() {
+    public List<LoginedUser> getCurrentLoginedUsers() {
         return Collections.unmodifiableList(
-            players.stream()
+            currentPlayers.stream()
                 .map(Player::getLoginedUser)
                 .collect(Collectors.toList()
                 )
@@ -128,10 +146,17 @@ public class Game {
     }
     
     /**
-     * @return  unmodifiable view of game players
+     * @return  unmodifiable view of game currentPlayers
      */
-    public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players);
+    public List<LoginedUser> getRegisteredPlayers() {
+        return Collections.unmodifiableList(registeredPlayers);
+    }
+    
+    /**
+     * @return  unmodifiable view of game currentPlayers
+     */
+    public List<Player> getCurrentPlayers() {
+        return Collections.unmodifiableList(currentPlayers);
     }
     
     /**
@@ -140,8 +165,8 @@ public class Game {
      * @return  true    if no one has move to do
      */
     public boolean isStalemate() {
-        for (Player p : players) {
-            if (p.getCards().stream().filter(topCard::acceptNext).count() > 0) {
+        for (Player p : currentPlayers) {
+            if (p.getCards().stream().limit(Player.VISIABLE_CARDS).filter(topCard::acceptNext).count() > 0) {
                 return false;
             }
         }
@@ -153,6 +178,7 @@ public class Game {
         while (isStalemate()) {
             topCard = Card.getRandomCard();
         }
+        moveNumber++;
     }
     
     public String getId() {
@@ -170,13 +196,17 @@ public class Game {
     public int getMoveNumber() {
         return moveNumber;
     }
+    
+    public void incMoveNumber() {
+        moveNumber++;
+    }
 
     public boolean isFull() {
-        return players.size() >= expectedPlayersNum;
+        return registeredPlayers.size() >= expectedPlayersNum;
     }
     
     public boolean isFinished() {
-        return winner != null || players.size() == 0;
+        return winner != null || currentPlayers.size() == 0;
     }
     
     @Nullable
@@ -197,17 +227,17 @@ public class Game {
         publicLobbyInfo.setLobbyId(this.id);
         publicLobbyInfo.setLobbyName(this.name);
         publicLobbyInfo.setMaxPlayersNumber(this.expectedPlayersNum);
-        publicLobbyInfo.setCurrentPlayersNumber(this.getPlayers().size());
+        publicLobbyInfo.setCurrentPlayersNumber(this.getCurrentPlayers().size());
         return publicLobbyInfo;
     }
     
     public PrivateLobbyInfo getPrivateLobbyInfo() {
         PrivateLobbyInfo privateLobbyInfo = new PrivateLobbyInfo();
-        privateLobbyInfo.setPlayers(players
+        privateLobbyInfo.setPlayers(registeredPlayers
                 .stream()
                 .map(p -> new PlayerInfo(
-                        p.getLoginedUser().getUser().getGeneratedLogin(),
-                        p.getLoginedUser().getUser().getRating())
+                        p.getUser().getGeneratedLogin(),
+                        p.getUser().getRating())
                 )
                 .collect(Collectors.toList())
         );
@@ -222,7 +252,7 @@ public class Game {
      * @throws GameAccessException  if user has not joined the game
      */
     public void checkUserJoined(LoginedUser user) throws GameAccessException {
-        for (Player p : players) {
+        for (Player p : currentPlayers) {
             if (p.getLoginedUser().equals(user)) {
                 return;
             }
@@ -239,6 +269,7 @@ public class Game {
     public class Player {
         private LoginedUser loginedUser;
         private List<Card> cards;
+        public static final int VISIABLE_CARDS = 8;
         
         Player(@Nonnull LoginedUser loginedUser) {
             this.loginedUser = loginedUser;

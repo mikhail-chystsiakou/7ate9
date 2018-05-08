@@ -7,7 +7,8 @@ public enum Difficulty {
     EASY (1000, 3000, "Petya", "Vanya", "Vasya"),
 //    EASY (100, 200, "Petya", "Vanya", "Vasya"),
     MEDIUM (500, 2500, "Petr", "Ivan", "Vasiliy"),
-    HARD (300, 1500, "Petr-Petrovich", "Ivan-Vasilyevich", "Vasiliy-Ivanovich");
+    HARD (300, 1500, "Aleksandr-Grygorievich", "Ivan-Ivanovich", "Vasiliy-Stepanovich"),
+    TESTIING (10, 50, "T-1000");
     protected String[] names;
     protected long delayMin;
     protected long delayMax;
@@ -23,7 +24,7 @@ public enum Difficulty {
     
     public String getName() {
         int nameIndex = Math.abs(random.nextInt()) % names.length;
-        return names[nameIndex] + "-" + generateAIId();
+        return names[nameIndex];// + "-" + generateAIId();
     }
     
     public long getDelay() {

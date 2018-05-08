@@ -17,11 +17,14 @@ public class LogInHandler extends SimpleChannelInboundHandler<LogInRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LogInRequest msg) throws Exception {
         logger.debug("User '{}' is logging in", msg.getName());
-        
         LoginedUser loginedUser = UserRegistry.authUser(msg.getName(), msg.getPasswordHash());
+        logger.debug("User '{}' authenticated as {}", loginedUser.getUser().getGeneratedLogin());
+        
         
         LogInResponse response = new LogInResponse();
         response.setAuthToken(loginedUser.getAuthToken());
+        response.setPlayerId(loginedUser.getUser().getGeneratedLogin());
+        response.setRating(loginedUser.getUser().getRating());
     
         ctx.channel().writeAndFlush(response);
     }

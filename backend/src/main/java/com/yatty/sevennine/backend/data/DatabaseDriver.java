@@ -14,7 +14,7 @@ import java.util.Properties;
 
 public class DatabaseDriver {
     public static final Logger logger = LoggerFactory.getLogger(DatabaseDriver.class);
-    private JdbcConnectionPool connectionPool;
+    private static JdbcConnectionPool connectionPool;
     private static final String DB_INITIALIZE_QUERY =
             "create table if not exists users "
             + "(id int not null auto_increment primary key, "
@@ -25,29 +25,24 @@ public class DatabaseDriver {
             "insert into users (login, password_hash, rating) values (?, ?, ?)";
     private static final String FIND_USER_QUERY =
             "select login, rating from users where password_hash = ?";
+    private static final String UPDATE_USER_QUERY =
+            "update users set rating = ? where password_hash = ?";
     
-    public DatabaseDriver() {
+    static {
         try {
             Properties dbProperties = PropertiesProvider.getDBProperties();
-            System.out.println("jdbc:h2:" + dbProperties.getProperty(PropertiesProvider.DB.LOCATION));
-            System.out.println(dbProperties.getProperty("db.login"));
-            System.out.println(dbProperties.getProperty(PropertiesProvider.DB.PASSWORD));
             connectionPool = JdbcConnectionPool.create(
                     "jdbc:h2:" + dbProperties.getProperty(PropertiesProvider.DB.LOCATION),
                     dbProperties.getProperty("db.login"),
                     dbProperties.getProperty(PropertiesProvider.DB.PASSWORD));
-            Connection c = connectionPool.getConnection();
-            System.out.println("Connection is " + c.isValid(1000));
-            Statement s = c.createStatement();
-            System.out.printf(s.toString());
-            s.execute(DB_INITIALIZE_QUERY);
+            connectionPool.getConnection().createStatement().execute(DB_INITIALIZE_QUERY);
         } catch (SQLException | IOException e) {
             logger.error("Failed to initialize DatabaseDriver", e);
         }
     }
     
     @Nullable
-    public User findUser(String passwordHash) {
+    public static User findUser(String passwordHash) {
         try (Connection conn = connectionPool.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(FIND_USER_QUERY);
             ps.setString(1, passwordHash);
@@ -67,7 +62,7 @@ public class DatabaseDriver {
         }
     }
     
-    public User createUser(String login, String passwordHash) {
+    public static User createUser(String login, String passwordHash) {
         try (Connection conn = connectionPool.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(CREATE_USER_QUERY);
             String saltedLogin = login + User.generateLoginSalt();
@@ -76,8 +71,8 @@ public class DatabaseDriver {
             ps.setInt(3, User.INITIAL_RATING);
             if (ps.executeUpdate() == 1) {
                 User user = new User();
-                user.setLogin(login);
                 user.setGeneratedLogin(saltedLogin);
+                user.setLogin(login);
                 user.setRating(User.INITIAL_RATING);
                 return user;
             } else {
@@ -88,7 +83,17 @@ public class DatabaseDriver {
         }
     }
     
-    public void close() {
+    public static void updateUserRating(User user) {
+        try (Connection conn = connectionPool.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(UPDATE_USER_QUERY);
+            ps.setInt(1, user.getRating());
+            ps.setString(2, user.getPasswordHash());
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to create user '" + user.getLogin() + "'", e);
+        }
+    }
+    
+    public static void close() {
         connectionPool.dispose();
     }
 }

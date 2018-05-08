@@ -16,6 +16,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Properties;
+import java.util.UUID;
 
 public class ClientStub {
     public static void main(String[] args) throws Exception {
@@ -45,12 +46,8 @@ public class ClientStub {
 
         System.out.println("Client started");
         Channel c = b.connect().sync().channel();
-        String testData = new ObjectMapper().writeValueAsString(new LogInRequest("Mike"));
 
-//        TestRequest testRequest = new TestRequest();
-//        testRequest.setResponseData(testData);
-
-        LogInRequest cr = new LogInRequest("Mike");
+        LogInRequest cr = new LogInRequest("Mike", UUID.randomUUID().toString());
 
 
         c.writeAndFlush(cr).addListener((e) -> {

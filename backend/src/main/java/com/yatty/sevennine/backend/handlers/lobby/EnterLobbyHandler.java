@@ -6,7 +6,6 @@ import com.yatty.sevennine.backend.model.Game;
 import com.yatty.sevennine.backend.model.GameRegistry;
 import com.yatty.sevennine.backend.model.LoginedUser;
 import com.yatty.sevennine.backend.model.UserRegistry;
-import com.yatty.sevennine.backend.util.CardRotator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -25,7 +24,7 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         );
     
         Game lobby = GameRegistry.getLobbyById(msg.getLobbyId());
-        lobby.addPlayer(user);
+        lobby.register(user);
         user.setChannel(ctx.channel());
         
 //        UserRegistry.addSubscriber(msg.getAuthToken());
@@ -34,24 +33,24 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
         response.setPrivateLobbyInfo(lobby.getPrivateLobbyInfo());
         
         ctx.channel().writeAndFlush(response).sync();
-    
+        
         LobbyStateChangedNotification newLobbyState =
                 new LobbyStateChangedNotification(lobby.getPrivateLobbyInfo());
-        logger.debug("Lobby size: {}", lobby.getPlayers().size());
-        lobby.getPlayers().forEach(p -> {
+        logger.debug("Lobby size: {}", lobby.getRegisteredPlayers().size());
+        lobby.getRegisteredPlayers().forEach(p -> {
             logger.debug("Sending LobbyStateChangedNotification");
-            if (!p.getLoginedUser().equals(user)) { // do not send update to update initiator
+            if (!p.equals(user)) { // do not send update to update initiator
                 logger.debug("Sending LobbyStateChangedNotification seriously");
-                p.getLoginedUser().getChannel().writeAndFlush(newLobbyState);
+                p.getChannel().writeAndFlush(newLobbyState);
             }
         });
         
         if (lobby.isFull()) {
-            lobby.giveOutCards();
+            lobby.start();
             
             GameRegistry.gameStarted(lobby.getId());
             
-            lobby.getPlayers().forEach(p -> {
+            lobby.getCurrentPlayers().forEach(p -> {
                 GameStartedNotification gameStartedNotification = new GameStartedNotification();
                 gameStartedNotification.setFirstCard(lobby.getTopCard());
                 gameStartedNotification.setPlayerCards(p.getCards());
