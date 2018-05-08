@@ -11,3 +11,5 @@
 Репозиторий клиентской части находится [здесь](https://github.com/Kimentii/7ate9-client)
 
 Команда в trello: https://trello.com/yattyteam
+
+Deliverables repository: https://packagecloud.io/zoxal/7ate9
