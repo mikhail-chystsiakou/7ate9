@@ -12,7 +12,6 @@ import com.yatty.sevennine.api.dto.lobby.LobbyListUnsubscribeRequest;
 import com.yatty.sevennine.util.PropertiesProvider;
 import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
-import io.netty.channel.Channel;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
