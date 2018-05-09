@@ -1,4 +1,4 @@
-# 7ate9 [![Build Status](https://travis-ci.org/ZoXaL/7ate9-backend.svg?branch=master)](https://travis-ci.org/ZoXaL/7ate9-backend)
+# 7ate9 [![Build Status](https://travis-ci.org/ZoXaL/7ate9-backend.svg?branch=master)](https://travis-ci.org/ZoXaL/7ate9-backend) <a rel="license" href="http://creativecommons.org/publicdomain/mark/1.0/"><img src="https://licensebuttons.net/p/mark/1.0/88x31.png" style="border-style: none;" alt="Public Domain Mark" /></a>
 
 В этом репозитории содержится:
 * Реализация серверной части игры 7ate9 (модуль backend)
