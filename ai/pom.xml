@@ -21,6 +21,10 @@
             <artifactId>shared-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.yatty.sevennine</groupId>
+            <artifactId>shared-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
