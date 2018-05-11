@@ -34,6 +34,16 @@
         </dependency>
 
         <dependency>
+            <groupId>com.yatty.sevennine</groupId>
+            <artifactId>shared-util</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yatty.sevennine</groupId>
+            <artifactId>shared-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
         </dependency>
