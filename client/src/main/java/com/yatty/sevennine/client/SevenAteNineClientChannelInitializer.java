@@ -1,7 +1,5 @@
 package com.yatty.sevennine.client;
 
-import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
-import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -12,8 +10,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SevenAteNineClientChannelInitializer extends ChannelInitializer<SocketChannel> {
-    private ChannelHandler encoder = new JsonMessageEncoder();
-    private ChannelHandler decoder = new JsonMessageDecoder();
+    private ChannelHandler encoder;
+    private ChannelHandler decoder;
     private ChannelHandler exceptionHandler;
     private List<ChannelHandler> handlers = new ArrayList<>(16);
     

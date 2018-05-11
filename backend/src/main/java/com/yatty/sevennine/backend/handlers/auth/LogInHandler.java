@@ -20,7 +20,6 @@ public class LogInHandler extends SimpleChannelInboundHandler<LogInRequest> {
         LoginedUser loginedUser = UserRegistry.authUser(msg.getName(), msg.getPasswordHash());
         logger.debug("User '{}' authenticated as {}", loginedUser.getUser().getGeneratedLogin());
         
-        
         LogInResponse response = new LogInResponse();
         response.setAuthToken(loginedUser.getAuthToken());
         response.setPlayerId(loginedUser.getUser().getGeneratedLogin());

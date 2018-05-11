@@ -1,18 +1,14 @@
 package com.yatty.sevennine.client;
 
 import com.yatty.sevennine.api.dto.ErrorResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Semaphore;
-import java.util.function.Consumer;
 
 /**
  * Provides synchronous communication with server
  */
 public class SynchronousClient extends SevenAteNineClient {
-    private static final Logger logger = LoggerFactory.getLogger(SynchronousClient.class);
     private volatile Object lastResponse;
     private Semaphore responseAvailable = new Semaphore(0);
     
@@ -64,10 +60,8 @@ public class SynchronousClient extends SevenAteNineClient {
                 } else if (ErrorResponse.class.isInstance(lastResponse)) {
                     throw new ServerException((ErrorResponse) lastResponse);
                 } else {
-                    logger.error("Got unexpected type {}. Expected type: {}.",
-                            lastResponse, responseType);
-//                    throw new ClientException("Got unexpected response type "
-//                            + lastResponse.getClass() + ". Expected type: " + responseType);
+                    throw new ClientException("Got unexpected response type "
+                            + lastResponse.getClass() + ". Expected type: " + responseType);
                 }
             }
         } catch (InterruptedException e) {

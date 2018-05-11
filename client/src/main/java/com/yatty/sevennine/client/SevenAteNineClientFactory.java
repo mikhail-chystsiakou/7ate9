@@ -5,8 +5,6 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -15,7 +13,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SevenAteNineClientFactory {
-    private static final Logger logger = LoggerFactory.getLogger(SevenAteNineClientFactory.class);
     private SevenAteNineClientChannelInitializer channelInitializer = new SevenAteNineClientChannelInitializer();
     
     public SevenAteNineClient getClient(InetSocketAddress serverAddress) {

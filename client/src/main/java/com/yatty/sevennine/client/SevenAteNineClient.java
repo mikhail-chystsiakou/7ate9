@@ -6,14 +6,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
 public class SevenAteNineClient {
-    private static final Logger logger = LoggerFactory.getLogger(SevenAteNineClient.class);
     private InetSocketAddress serverAddress;
     private volatile EventLoopGroup eventLoopGroup;
     private ChannelInitializer<SocketChannel> channelInitializer;
@@ -45,7 +41,7 @@ public class SevenAteNineClient {
         this.keepAlive = keepAlive;
         aliveChannel.writeAndFlush(message).addListener((ChannelFutureListener) future -> {
             if (!future.isSuccess()) {
-                logger.error("Failed to send message: {}", future.cause());
+//                logger.error("Failed to send message: {}", future.cause());
             }
         });
     }
@@ -54,14 +50,14 @@ public class SevenAteNineClient {
         if (eventLoopGroup != null) {
             eventLoopGroup.shutdownGracefully().addListener((e) -> {
                 if (e.isSuccess()) {
-                    logger.debug("SevenAteNineClient shutdown succeed");
+//                    logger.debug("SevenAteNineClient shutdown succeed");
                     eventLoopGroup = null;
                 } else {
-                    logger.error("Failed to SevenAteNineClient gracefully");
+//                    logger.error("Failed to SevenAteNineClient gracefully");
                 }
             });
         } else {
-            logger.warn("Can not stop SevenAteNineClient: client wasn't started");
+//            logger.warn("Can not stop SevenAteNineClient: client wasn't started");
         }
     }
     
@@ -74,17 +70,17 @@ public class SevenAteNineClient {
         try {
             aliveChannel = bootstrap.connect().sync().channel();
         } catch (InterruptedException e) {
-            logger.error("Failed to connect to {}", serverAddress, e);
+//            logger.error("Failed to connect to {}", serverAddress, e);
             throw new RuntimeException("Failed to connect to " + serverAddress, e);
         }
         System.out.println(aliveChannel.pipeline());
         aliveChannel.closeFuture().addListener(e -> {
             if (keepAlive) {
-                logger.debug("Connection closed, reopening...");
+//                logger.debug("Connection closed, reopening...");
                 connect();
                 aliveChannel.writeAndFlush(new KeepAliveRequest());
             } else {
-                logger.debug("Connection closed, do not reopen");
+//                logger.debug("Connection closed, do not reopen");
             }
         });
     }
