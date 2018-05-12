@@ -6,6 +6,8 @@
 
 ## Ссылки
 
+Лабораторные работы находятся [здесь](https://github.com/zoxal/7ate9-labs)
+
 Документация проекта находится [здесь](https://github.com/ZoXaL/7ate9-backend/wiki)
 
 Репозиторий клиентской части находится [здесь](https://github.com/Kimentii/7ate9-client)
