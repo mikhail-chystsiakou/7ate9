@@ -1,8 +1,11 @@
 package com.yatty.sevennine.client;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.codec.json.JsonObjectDecoder;
 
 import java.util.ArrayList;
@@ -10,8 +13,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SevenAteNineClientChannelInitializer extends ChannelInitializer<SocketChannel> {
-    private ChannelHandler encoder;
-    private ChannelHandler decoder;
+    private MessageToMessageEncoder<Object> encoder;
+    private MessageToMessageDecoder<ByteBuf> decoder;
     private ChannelHandler exceptionHandler;
     private List<ChannelHandler> handlers = new ArrayList<>(16);
     
@@ -39,11 +42,11 @@ public class SevenAteNineClientChannelInitializer extends ChannelInitializer<Soc
         }
     }
     
-    public void setEncoder(ChannelHandler encoder) {
+    public void setEncoder(MessageToMessageEncoder<Object> encoder) {
         this.encoder = encoder;
     }
     
-    public void setDecoder(ChannelHandler decoder) {
+    public void setDecoder(MessageToMessageDecoder<ByteBuf> decoder) {
         this.decoder = decoder;
     }
     

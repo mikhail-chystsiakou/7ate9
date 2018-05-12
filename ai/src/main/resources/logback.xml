@@ -18,7 +18,7 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="com.yatty.sevennine.ai" level="debug" additivity="false">
+    <logger name="com.yatty.sevennine" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

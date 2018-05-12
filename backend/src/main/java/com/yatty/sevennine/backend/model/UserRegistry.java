@@ -35,7 +35,9 @@ public class UserRegistry {
         User user = DatabaseDriver.findUser(passwordHash);
         if (user == null) {
             loginedUser.setUser(DatabaseDriver.createUser(login, passwordHash));
+            logger.debug("Creating user '{}'", loginedUser.getUser().getGeneratedLogin());
         } else {
+            logger.debug("Authentication user '{}'", user.getLogin());
             if (!login.equals(user.getLogin())) {
                 logger.debug("Failed to login user {} as {}", login, user.getLogin());
                 throw new LogInException(login);

@@ -57,21 +57,21 @@ public class Game {
         registeredPlayers.add(user);
     }
     
-    public void unregisterPlayer(LoginedUser user) {
-        if (started) throw new IllegalStateException("Game already started");
-        checkUserJoined(user);
-        for (LoginedUser u: registeredPlayers) {
-            if (u.equals(user)) {
-                currentPlayers.remove(u);
-            }
-        }
-    }
+//    public void unregisterPlayer(LoginedUser user) {
+//        if (started) throw new IllegalStateException("Game already started");
+//       checkUserJoined(user);
+//        for (LoginedUser u: registeredPlayers) {
+//            if (u.equals(user)) {
+//                currentPlayers.remove(u);
+//            }
+//        }
+//    }
     
     public void playerLeave(LoginedUser user) {
         checkUserJoined(user);
-        for (Player p : currentPlayers) {
-            if (p.getLoginedUser().equals(user)) {
-                currentPlayers.remove(p);
+        for (int i = 0; i < currentPlayers.size(); i++) {
+            if (currentPlayers.get(i).getLoginedUser().equals(user)) {
+                currentPlayers.remove(i);
             }
         }
         if (currentPlayers.size() == 1) {
@@ -195,7 +195,7 @@ public class Game {
 
     public int getMoveNumber() {
         return moveNumber;
-    }
+    }mi
     
     public void incMoveNumber() {
         moveNumber++;
@@ -227,7 +227,7 @@ public class Game {
         publicLobbyInfo.setLobbyId(this.id);
         publicLobbyInfo.setLobbyName(this.name);
         publicLobbyInfo.setMaxPlayersNumber(this.expectedPlayersNum);
-        publicLobbyInfo.setCurrentPlayersNumber(this.getCurrentPlayers().size());
+        publicLobbyInfo.setCurrentPlayersNumber(this.getRegisteredPlayers().size());
         return publicLobbyInfo;
     }
     

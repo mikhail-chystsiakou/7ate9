@@ -1,11 +1,17 @@
 package com.yatty.sevennine.client;
 
+import ch.qos.logback.core.net.ObjectWriter;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -13,6 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SevenAteNineClientFactory {
+    public static final Logger logger = LoggerFactory.getLogger(SevenAteNineClientFactory.class);
     private SevenAteNineClientChannelInitializer channelInitializer = new SevenAteNineClientChannelInitializer();
     
     public SevenAteNineClient getClient(InetSocketAddress serverAddress) {
@@ -33,7 +40,12 @@ public class SevenAteNineClientFactory {
         channelInitializer.setEncoder(new MessageToMessageEncoder<Object>() {
             @Override
             protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-                out.add(encoder.apply(msg));
+                try {
+                    String encodedData = encoder.apply(msg);
+                    out.add(Unpooled.wrappedBuffer(encodedData.getBytes(StandardCharsets.UTF_8)));
+                } catch (Exception e) {
+                    logger.error("Unexpected exception", e);
+                }
             }
         });
     }

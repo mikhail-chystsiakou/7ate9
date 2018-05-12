@@ -3,6 +3,8 @@ package com.yatty.sevennine.ai;
 import com.yatty.sevennine.client.SevenAteNineClientFactory;
 import com.yatty.sevennine.client.SynchronousClient;
 import com.yatty.sevennine.util.PropertiesProvider;
+import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
+import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,14 +56,16 @@ public class AIRunner {
                 runner.setPlayers(Integer.valueOf(args[PLAYERS_PARAM]));
             }
             Properties aiProperties = PropertiesProvider.lookupAndGet(PropertiesProvider.AI.FILE_NAME);
-            
+            String host = aiProperties.getProperty(PropertiesProvider.AI.SERVER_IP);
+            String port = aiProperties.getProperty(PropertiesProvider.AI.SERVER_PORT);
+            logger.debug("Server: {}:{}", host, port);
             runner.setServerAddress(new InetSocketAddress(
-//                    aiProperties.getProperty(PropertiesProvider.AI.SERVER_IP),
-                    aiProperties.getProperty("server.ip"),
-                    Integer.valueOf(aiProperties.getProperty(PropertiesProvider.AI.SERVER_PORT))
+                    host,
+                    Integer.valueOf(port)
             ));
             runner.setDifficulty(Difficulty.values()[Integer.valueOf(args[DIFFICULTY_PARAM])]);
             runner.setGames(Integer.valueOf(args[GAMES_NUMBER_PARAM]));
+            logger.debug("Starting AI...");
             runner.run();
         } catch (NumberFormatException e) {
             showUsage();
@@ -77,6 +81,8 @@ public class AIRunner {
     
     public void run() {
         SevenAteNineClientFactory factory = new SevenAteNineClientFactory();
+        factory.setCustomEncoder(new JsonMessageEncoder());
+        factory.setCustomDecoder(new JsonMessageDecoder());
         factory.setExceptionHandler(Throwable::printStackTrace);
         SynchronousClient client = factory.getSynchronousClient(serverAddress);
         client.start();
@@ -109,9 +115,14 @@ public class AIRunner {
     }
     
     private static void showUsage() {
-        System.out.println("\tAIRunner [sever-ip] [server-port] [difficulty] [games] [hosting] [players]");
-        System.out.println("\t\tserver-ip — IP of game server");
-        System.out.println("\t\tserver-port — port of game server");
+//        System.out.println("\tAIRunner [sever-ip] [server-port] [difficulty] [games] [hosting] [players]");
+//        System.out.println("\t\tserver-ip — IP of game server");
+//        System.out.println("\t\tserver-port — port of game server");
+//        System.out.println("\t\tdifficulty — integer from 0 (easy) to 3 (hard)");
+//        System.out.println("\t\tgames — number of games to play");
+//        System.out.println("\t\thosting — true if bot must create new lobbies");
+//        System.out.println("\t\tplayers — number of players in hosted games");
+        System.out.println("\tAIRunner [difficulty] [games] [hosting] [players]");
         System.out.println("\t\tdifficulty — integer from 0 (easy) to 3 (hard)");
         System.out.println("\t\tgames — number of games to play");
         System.out.println("\t\thosting — true if bot must create new lobbies");

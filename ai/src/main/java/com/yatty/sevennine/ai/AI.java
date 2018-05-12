@@ -48,6 +48,7 @@ public class AI {
     protected volatile String gameId;
     
     public AI(SynchronousClient client, Difficulty difficulty, int games) {
+        logger.debug("Simple AI started");
         this.client = client;
         this.difficulty = difficulty;
         this.games = games;
@@ -70,6 +71,7 @@ public class AI {
     
     protected void login() {
         try {
+            logger.debug("Logging in...");
             String passwordHash = new String(
                     MessageDigest.getInstance("SHA-256").digest(UUID.randomUUID().toString().getBytes())
             );
@@ -79,7 +81,7 @@ public class AI {
             playerId = response.getPlayerId();
             logger.debug("Logged in as {} ({}): {}", playerId, passwordHash, authToken);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error("Unexpected error", e);
         }
     }
     
