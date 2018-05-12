@@ -195,7 +195,7 @@ public class Game {
 
     public int getMoveNumber() {
         return moveNumber;
-    }mi
+    }
     
     public void incMoveNumber() {
         moveNumber++;
