@@ -60,5 +60,6 @@ public class EnterLobbyHandler extends SimpleChannelInboundHandler<EnterLobbyReq
             });
 //            CardRotator.start(lobby);
         }
+        GameRegistry.sendLobbyListUpdateNotification();
     }
 }

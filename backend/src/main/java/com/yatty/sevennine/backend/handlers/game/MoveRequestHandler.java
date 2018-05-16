@@ -85,14 +85,14 @@ public class MoveRequestHandler extends SimpleChannelInboundHandler<MoveRequest>
         
         if (game.isFinished()) {
             newStateNotification.setLastMove(true);
+            EloRating.updateUsersRatings(game.getRegisteredPlayers(), moveAuthor);
+            game.getRegisteredPlayers().forEach(u -> DatabaseDriver.updateUserRating(u.getUser()));
             
             GameResult gameResult = new GameResult();
             if (game.getWinner() != null) {
                 gameResult.setWinner(game.getWinner().getLoginedUser().getUser().getGeneratedLogin());
             }
             game.getCurrentPlayers().forEach(p -> gameResult.addScore(p.getResult()));
-            EloRating.updateUsersRatings(game.getRegisteredPlayers(), moveAuthor);
-            game.getRegisteredPlayers().forEach(u -> DatabaseDriver.updateUserRating(u.getUser()));
             
             newStateNotification.setGameResult(gameResult);
 

@@ -1,15 +1,16 @@
 package com.yatty.sevennine.api;
 
 public class PlayerResult {
-    private String playerName;
+    private String playerId;
     private int cardsLeft;
+    private int newRating;
 
-    public String getPlayerName() {
-        return playerName;
+    public String getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
     }
 
     public int getCardsLeft() {
@@ -18,5 +19,13 @@ public class PlayerResult {
 
     public void setCardsLeft(int cardsLeft) {
         this.cardsLeft = cardsLeft;
+    }
+    
+    public int getNewRating() {
+        return newRating;
+    }
+    
+    public void setNewRating(int newRating) {
+        this.newRating = newRating;
     }
 }

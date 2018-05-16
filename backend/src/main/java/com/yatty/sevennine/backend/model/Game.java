@@ -9,7 +9,6 @@ import com.yatty.sevennine.backend.exceptions.logic.FullLobbyException;
 import com.yatty.sevennine.backend.exceptions.security.GameAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,15 +56,23 @@ public class Game {
         registeredPlayers.add(user);
     }
     
-//    public void unregisterPlayer(LoginedUser user) {
-//        if (started) throw new IllegalStateException("Game already started");
-//       checkUserJoined(user);
-//        for (LoginedUser u: registeredPlayers) {
-//            if (u.equals(user)) {
-//                currentPlayers.remove(u);
-//            }
-//        }
-//    }
+    /**
+     * Removes player from the list of registered players.
+     *
+     * @param user  user to unregister.
+     * @throws {@link GameAccessException}  if player is not regisered in game.
+     */
+    public void unregister(LoginedUser user) throws GameAccessException {
+        logger.debug("Unregistering player {}, registered: {}", user.getAuthToken(), registeredPlayers.size());
+        if (started) throw new IllegalStateException("Game already started");
+        checkUserRegistered(user);
+        for (int i = 0; i < registeredPlayers.size(); i++) {
+            logger.debug("Unregistering {}, cmp {}", user, registeredPlayers.get(i));
+            if (registeredPlayers.get(i).equals(user)) {
+                registeredPlayers.remove(i);
+            }
+        }
+    }
     
     public void playerLeave(LoginedUser user) {
         checkUserJoined(user);
@@ -253,7 +260,22 @@ public class Game {
      */
     public void checkUserJoined(LoginedUser user) throws GameAccessException {
         for (Player p : currentPlayers) {
-            if (p.getLoginedUser().equals(user)) {
+            if (p.getLoginedUser().getAuthToken().equals(user.getAuthToken())) {
+                return;
+            }
+        }
+        throw new GameAccessException(user, this);
+    }
+    
+    /**
+     * Checks, that user has already registered in this game.
+     *
+     * @param user                  user to check
+     * @throws GameAccessException  if user has not registered in the game
+     */
+    public void checkUserRegistered(LoginedUser user) throws GameAccessException {
+        for (LoginedUser u : registeredPlayers) {
+            if (u.getAuthToken().equals(user.getAuthToken())) {
                 return;
             }
         }
@@ -269,7 +291,7 @@ public class Game {
     public class Player {
         private LoginedUser loginedUser;
         private List<Card> cards;
-        public static final int VISIABLE_CARDS = 8;
+        public static final int VISIABLE_CARDS = 2;
         
         Player(@Nonnull LoginedUser loginedUser) {
             this.loginedUser = loginedUser;
@@ -293,8 +315,9 @@ public class Game {
         
         public PlayerResult getResult() {
             PlayerResult playerResult = new PlayerResult();
-            playerResult.setPlayerName(loginedUser.getUser().getGeneratedLogin());
+            playerResult.setPlayerId(loginedUser.getUser().getGeneratedLogin());
             playerResult.setCardsLeft(cards.size());
+            playerResult.setNewRating(loginedUser.getUser().getRating());
             return playerResult;
         }
     

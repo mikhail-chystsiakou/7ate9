@@ -6,10 +6,7 @@ import com.yatty.sevennine.backend.handlers.auth.LogInHandler;
 import com.yatty.sevennine.backend.handlers.auth.LogOutHandler;
 import com.yatty.sevennine.backend.handlers.game.LeaveGameRequestHandler;
 import com.yatty.sevennine.backend.handlers.game.MoveRequestHandler;
-import com.yatty.sevennine.backend.handlers.lobby.CreateLobbyHandler;
-import com.yatty.sevennine.backend.handlers.lobby.EnterLobbyHandler;
-import com.yatty.sevennine.backend.handlers.lobby.LobbySubscribeHandler;
-import com.yatty.sevennine.backend.handlers.lobby.LobbyUnsubscribeHandler;
+import com.yatty.sevennine.backend.handlers.lobby.*;
 import com.yatty.sevennine.util.PropertiesProvider;
 import com.yatty.sevennine.util.codecs.JsonMessageDecoder;
 import com.yatty.sevennine.util.codecs.JsonMessageEncoder;
@@ -71,6 +68,7 @@ public class TCPServer {
         private ChannelHandler logOutHandler = new LogOutHandler();
         private ChannelHandler lobbySubscribeHandler = new LobbySubscribeHandler();
         private ChannelHandler enterLobbyHandler = new EnterLobbyHandler();
+        private ChannelHandler leaveLobbyHandler = new LeaveLobbyHandler();
         private ChannelHandler leaveGameRequestHandler = new LeaveGameRequestHandler();
         private ChannelHandler lobbyUnsubscribeHandler = new LobbyUnsubscribeHandler();
         private ChannelHandler createLobbyHandler = new CreateLobbyHandler();
@@ -91,6 +89,7 @@ public class TCPServer {
                 
                 ch.pipeline().addLast("lobbySubscribeHandler", lobbySubscribeHandler);
                 ch.pipeline().addLast("enterLobbyHandler", enterLobbyHandler);
+                ch.pipeline().addLast("leaveLobbyHandler", leaveLobbyHandler);
                 ch.pipeline().addLast("lobbyUnsubscribeHandler", lobbyUnsubscribeHandler);
                 ch.pipeline().addLast("createLobbyHandler", createLobbyHandler);
                 ch.pipeline().addLast("leaveGameRequestHandler", leaveGameRequestHandler);

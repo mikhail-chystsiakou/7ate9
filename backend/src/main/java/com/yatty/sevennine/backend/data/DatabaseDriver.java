@@ -88,6 +88,7 @@ public class DatabaseDriver {
             PreparedStatement ps = conn.prepareStatement(UPDATE_USER_QUERY);
             ps.setInt(1, user.getRating());
             ps.setString(2, user.getPasswordHash());
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException("Failed to create user '" + user.getLogin() + "'", e);
         }

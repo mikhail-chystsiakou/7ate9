@@ -39,10 +39,6 @@ public class CreateLobbyHandler extends SimpleChannelInboundHandler<CreateLobbyR
         
         ctx.channel().writeAndFlush(response).sync();
         
-        LobbyListUpdatedNotification notification = new LobbyListUpdatedNotification();
-        notification.setLobbyList(GameRegistry.getLobbyListPublicInfo());
-        Collection<LoginedUser> lobbiesSubscribers = UserRegistry.getSubscribers();
-        
-        lobbiesSubscribers.forEach(u -> u.getChannel().writeAndFlush(notification));
+        GameRegistry.sendLobbyListUpdateNotification();
     }
 }

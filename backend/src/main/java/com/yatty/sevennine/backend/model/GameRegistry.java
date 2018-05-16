@@ -1,5 +1,6 @@
 package com.yatty.sevennine.backend.model;
 
+import com.yatty.sevennine.api.dto.lobby.LobbyListUpdatedNotification;
 import com.yatty.sevennine.api.dto.lobby.PublicLobbyInfo;
 import com.yatty.sevennine.backend.exceptions.logic.LobbyNotFoundException;
 import org.slf4j.Logger;
@@ -31,6 +32,19 @@ public class GameRegistry {
         } else {
             throw new LobbyNotFoundException("Failed to start game. ", lobbyId);
             
+        }
+    }
+    
+    public static void removeLobby(String lobbyId) {
+        if (lobbyMap.containsKey(lobbyId)) {
+            logger.debug(
+                    "Lobby '{}' (id '{}') removed",
+                    lobbyMap.get(lobbyId).getName(),
+                    lobbyId
+            );
+            lobbyMap.remove(lobbyId);
+        } else {
+            throw new LobbyNotFoundException("Failed to finish game", lobbyId);
         }
     }
     
@@ -71,5 +85,13 @@ public class GameRegistry {
                 .stream()
                 .map(Game::getPublicLobbyInfo)
                 .collect(Collectors.toList());
+    }
+    
+    public static void sendLobbyListUpdateNotification() {
+        LobbyListUpdatedNotification notification = new LobbyListUpdatedNotification();
+        notification.setLobbyList(GameRegistry.getLobbyListPublicInfo());
+    
+        Collection<LoginedUser> lobbiesSubscribers = UserRegistry.getSubscribers();
+        lobbiesSubscribers.forEach(u -> u.getChannel().writeAndFlush(notification));
     }
 }
